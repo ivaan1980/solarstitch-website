@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Stitch | Solar Installations, Maintenance & Blitzer VSD Compressor Retrofits</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000000;
+            --dark-gray: #2c2c2c;
+            --mid-gray: #808080;
+            --light-gray: #BDBDBD;
+            --lighter-gray: #E5E5E5;
+            --off-white: #F5F5F5;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
+            color: var(--dark-gray);
+            background: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--white);
+            z-index: 1000;
+            border-bottom: 1px solid var(--lighter-gray);
+            padding: 25px 0;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo-text {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .nav-logo-solar {
+            font-size: 1.5em;
+            letter-spacing: 10px;
+            color: var(--black);
+            font-weight: 600;
+        }
+
+        .nav-logo-divider {
+            width: 2px;
+            height: 25px;
+            background: var(--mid-gray);
+        }
+
+        .nav-logo-stitch {
+            font-size: 1.5em;
+            letter-spacing: 10px;
+            color: var(--mid-gray);
+            font-weight: 300;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 50px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--mid-gray);
+            font-size: 0.75em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+            font-weight: 400;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--black);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 150px 60px 100px;
+            background: var(--white);
+        }
+
+        .hero-wordmark {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .hero-solar {
+            font-size: 5em;
+            letter-spacing: 25px;
+            color: var(--black);
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .hero-divider {
+            width: 4px;
+            height: 80px;
+            background: var(--mid-gray);
+        }
+
+        .hero-stitch {
+            font-size: 5em;
+            letter-spacing: 25px;
+            color: var(--mid-gray);
+            font-weight: 300;
+            line-height: 1;
+        }
+
+        .hero-tagline {
+            font-size: 1.1em;
+            color: var(--mid-gray);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 60px;
+            font-weight: 300;
+        }
+
+        .hero-description {
+            font-size: 1.3em;
+            color: var(--dark-gray);
+            max-width: 800px;
+            line-height: 2;
+            margin-bottom: 60px;
+            font-weight: 300;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .cta-button {
+            padding: 20px 60px;
+            background: var(--white);
+            color: var(--black);
+            text-decoration: none;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-size: 0.75em;
+            border: 2px solid var(--black);
+            transition: all 0.3s;
+            display: inline-block;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .cta-button:hover,
+        .cta-button.primary {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .cta-button.primary:hover {
+            background: var(--dark-gray);
+        }
+
+        /* Section Base Styles */
+        section {
+            padding: 120px 60px;
+        }
+
+        .section-title {
+            font-size: 2em;
+            font-weight: 300;
+            letter-spacing: 15px;
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--black);
+            text-transform: uppercase;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--mid-gray);
+            font-size: 1em;
+            max-width: 700px;
+            margin: 0 auto 80px;
+            line-height: 2;
+            letter-spacing: 1px;
+            font-weight: 300;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* About Section */
+        .about {
+            background: var(--off-white);
+        }
+
+        .about-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-text {
+            font-size: 1.1em;
+            line-height: 2.2;
+            color: var(--dark-gray);
+            font-weight: 300;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            margin-top: 80px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 30px;
+            border: 1px solid var(--lighter-gray);
+            background: var(--white);
+        }
+
+        .stat-title {
+            font-size: 0.7em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--mid-gray);
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 1em;
+            color: var(--black);
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 180px 60px 100px;
+            background: var(--dark-gray);
+            text-align: center;
+        }
+
+        .page-header .section-title {
+            color: var(--white);
+            margin-bottom: 20px;
+        }
+
+        .page-header .section-subtitle {
+            color: var(--light-gray);
+            margin-bottom: 0;
+        }
+
+        /* Services Grid */
+        .services-section {
+            background: var(--white);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .service-card {
+            padding: 50px 40px;
+            border: 1px solid var(--lighter-gray);
+            transition: all 0.3s;
+        }
+
+        .service-card:hover {
+            border-color: var(--black);
+        }
+
+        .service-number {
+            font-size: 0.75em;
+            color: var(--light-gray);
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+        }
+
+        .service-title {
+            font-size: 1.1em;
+            font-weight: 500;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            color: var(--black);
+        }
+
+        .service-desc {
+            font-size: 0.9em;
+            color: var(--mid-gray);
+            line-height: 1.9;
+            font-weight: 300;
+        }
+
+        /* Projects Grid */
+        .projects-section {
+            background: var(--white);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .project-card {
+            padding: 60px 50px;
+            border: 1px solid var(--lighter-gray);
+            transition: all 0.3s;
+        }
+
+        .project-card:hover {
+            border-color: var(--black);
+        }
+
+        .project-card.featured {
+            grid-column: span 2;
+            background: var(--dark-gray);
+            border-color: var(--dark-gray);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .project-card.featured:hover {
+            background: #333;
+        }
+
+        .project-number {
+            font-size: 0.75em;
+            color: var(--light-gray);
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+        }
+
+        .project-card.featured .project-number {
+            color: var(--mid-gray);
+        }
+
+        .project-title {
+            font-size: 1.3em;
+            font-weight: 500;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+            color: var(--black);
+        }
+
+        .project-card.featured .project-title {
+            color: var(--white);
+        }
+
+        .project-desc {
+            font-size: 0.95em;
+            color: var(--mid-gray);
+            line-height: 2;
+            font-weight: 300;
+        }
+
+        .project-card.featured .project-desc {
+            color: var(--light-gray);
+        }
+
+        .project-features {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .project-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--lighter-gray);
+            font-size: 0.85em;
+            color: var(--dark-gray);
+            letter-spacing: 0.5px;
+        }
+
+        .project-card.featured .project-features li {
+            border-bottom-color: #444;
+            color: var(--light-gray);
+        }
+
+        /* Featured Project Visual */
+        .featured-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .visual-box {
+            background: #3a3a3a;
+            padding: 35px;
+            text-align: center;
+        }
+
+        .visual-box-label {
+            font-size: 0.65em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--mid-gray);
+            margin-bottom: 12px;
+        }
+
+        .visual-box-value {
+            font-size: 1.8em;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: var(--white);
+        }
+
+        .visual-box-desc {
+            font-size: 0.75em;
+            color: var(--light-gray);
+            margin-top: 8px;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            background: var(--off-white);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--white);
+            padding: 50px 40px;
+            border: 1px solid var(--lighter-gray);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--black);
+            transform: scale(1.03);
+        }
+
+        .pricing-tier {
+            font-size: 0.65em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--mid-gray);
+            margin-bottom: 15px;
+        }
+
+        .pricing-name {
+            font-size: 1.3em;
+            font-weight: 500;
+            letter-spacing: 4px;
+            margin-bottom: 30px;
+            color: var(--black);
+        }
+
+        .pricing-price {
+            font-size: 2.5em;
+            font-weight: 300;
+            color: var(--black);
+        }
+
+        .pricing-period {
+            font-size: 0.8em;
+            color: var(--mid-gray);
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--lighter-gray);
+            font-size: 0.85em;
+            color: var(--dark-gray);
+            letter-spacing: 0.5px;
+        }
+
+        /* Contact Section */
+        .contact {
+            background: var(--white);
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 100px;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            text-align: center;
+        }
+
+        .contact-label {
+            font-size: 0.7em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--mid-gray);
+            margin-bottom: 15px;
+        }
+
+        .contact-value a {
+            font-size: 1.1em;
+            color: var(--black);
+            text-decoration: none;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        .contact-value a:hover {
+            color: var(--mid-gray);
+        }
+
+        /* CTA Banner */
+        .cta-banner {
+            background: var(--off-white);
+            text-align: center;
+            padding: 80px 60px;
+        }
+
+        .cta-banner p {
+            font-size: 1.2em;
+            color: var(--dark-gray);
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+            font-weight: 300;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--black);
+            color: var(--mid-gray);
+            text-align: center;
+            padding: 60px;
+            font-size: 0.75em;
+            letter-spacing: 2px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .nav-links {
+                gap: 30px;
+            }
+
+            .hero-solar, .hero-stitch {
+                font-size: 3em;
+                letter-spacing: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .project-card.featured {
+                grid-column: span 1;
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 80px 30px;
+            }
+
+            .nav-content {
+                padding: 0 30px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 120px 30px 80px;
+            }
+
+            .hero-wordmark {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .hero-divider {
+                width: 60px;
+                height: 3px;
+            }
+
+            .hero-solar, .hero-stitch {
+                font-size: 2.5em;
+                letter-spacing: 12px;
+            }
+
+            .section-title {
+                font-size: 1.5em;
+                letter-spacing: 10px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .page-header {
+                padding: 140px 30px 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function App() {
+            const [currentPage, setCurrentPage] = useState('home');
+
+            const navigateTo = (page) => {
+                setCurrentPage(page);
+                window.scrollTo(0, 0);
+            };
+
+            return (
+                <div>
+                    <Navigation currentPage={currentPage} navigateTo={navigateTo} />
+                    {currentPage === 'home' && <HomePage navigateTo={navigateTo} />}
+                    {currentPage === 'services' && <ServicesPage navigateTo={navigateTo} />}
+                    {currentPage === 'projects' && <ProjectsPage navigateTo={navigateTo} />}
+                    <Footer />
+                </div>
+            );
+        }
+
+        function Navigation({ currentPage, navigateTo }) {
+            return (
+                <nav>
+                    <div className="nav-content">
+                        <a className="nav-logo-text" onClick={() => navigateTo('home')}>
+                            <span className="nav-logo-solar">SOLAR</span>
+                            <span className="nav-logo-divider"></span>
+                            <span className="nav-logo-stitch">STITCH</span>
+                        </a>
+                        <ul className="nav-links">
+                            <li><a onClick={() => navigateTo('home')} className={currentPage === 'home' ? 'active' : ''}>Home</a></li>
+                            <li><a onClick={() => navigateTo('services')} className={currentPage === 'services' ? 'active' : ''}>Services</a></li>
+                            <li><a onClick={() => navigateTo('projects')} className={currentPage === 'projects' ? 'active' : ''}>Projects</a></li>
+                            <li><a onClick={() => navigateTo('home')} className="">Pricing</a></li>
+                            <li><a onClick={() => navigateTo('home')} className="">Contact</a></li>
+                        </ul>
+                    </div>
+                </nav>
+            );
+        }
+
+        /* ===== HOME PAGE ===== */
+        function HomePage({ navigateTo }) {
+            return (
+                <div>
+                    <Hero navigateTo={navigateTo} />
+                    <About />
+                    <Pricing />
+                    <Contact />
+                </div>
+            );
+        }
+
+        function Hero({ navigateTo }) {
+            return (
+                <section className="hero">
+                    <div className="hero-wordmark">
+                        <span className="hero-solar">SOLAR</span>
+                        <span className="hero-divider"></span>
+                        <span className="hero-stitch">STITCH</span>
+                    </div>
+                    <p className="hero-tagline">Stitch. Optimize. Power.</p>
+                    <p className="hero-description">
+                        Expert solar installations, comprehensive maintenance, and specialized Blitzer VSD compressor retrofits.<br />
+                        Transform your energy systems and refrigeration equipment for maximum solar compatibility.
+                    </p>
+                    <div className="hero-buttons">
+                        <a className="cta-button" onClick={() => navigateTo('services')}>Our Services</a>
+                        <a className="cta-button primary" onClick={() => navigateTo('projects')}>View Projects</a>
+                    </div>
+                </section>
+            );
+        }
+
+        function About() {
+            return (
+                <section className="about" id="about">
+                    <div className="container">
+                        <h2 className="section-title">BEYOND PANELS</h2>
+                        <p className="section-subtitle">
+                            We install, maintain, and optimize complete energy systems.
+                        </p>
+                        <div className="about-content">
+                            <p className="about-text">
+                                Solar Stitch delivers comprehensive energy solutions across three core specializations:
+                                Professional solar installations from design to commissioning. Complete system maintenance
+                                and repair services with 24/7 monitoring. And our unique specialty—Blitzer VSD compressor
+                                retrofits that transform refrigeration systems to run efficiently on solar and inverter
+                                power without massive startup surges.
+                            </p>
+
+                            <div className="stats-grid">
+                                <div className="stat-item">
+                                    <div className="stat-title">Solar Partners</div>
+                                    <div className="stat-value">Victron & SolarMD</div>
+                                </div>
+                                <div className="stat-item">
+                                    <div className="stat-title">VSD Control</div>
+                                    <div className="stat-value">ABB & Blitzer</div>
+                                </div>
+                                <div className="stat-item">
+                                    <div className="stat-title">Monitoring</div>
+                                    <div className="stat-value">24/7 Remote Care</div>
+                                </div>
+                                <div className="stat-item">
+                                    <div className="stat-title">Response</div>
+                                    <div className="stat-value">2-4 Hour Emergency</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        function Pricing() {
+            const plans = [
+                {
+                    tier: "Basic Plan",
+                    name: "REMOTE WATCH",
+                    price: "R499",
+                    period: "per month",
+                    features: [
+                        "24/7 remote monitoring",
+                        "Performance alerts",
+                        "Monthly reports",
+                        "Basic support",
+                        "1 site visit per year"
+                    ]
+                },
+                {
+                    tier: "Recommended",
+                    name: "FULL CARE",
+                    price: "R899",
+                    period: "per month",
+                    featured: true,
+                    features: [
+                        "Everything in Remote Watch",
+                        "Remote firmware updates",
+                        "2 site visits per year",
+                        "Priority 4hr response",
+                        "10% repair discount",
+                        "Dedicated WhatsApp support"
+                    ]
+                },
+                {
+                    tier: "Premium Plan",
+                    name: "BUSINESS GUARD",
+                    price: "R1,499",
+                    period: "per month",
+                    features: [
+                        "Everything in Full Care",
+                        "4 site visits per year",
+                        "2hr emergency SLA",
+                        "15% repair discount",
+                        "Custom dashboard",
+                        "Phone support"
+                    ]
+                }
+            ];
+
+            return (
+                <section className="pricing" id="pricing">
+                    <div className="container">
+                        <h2 className="section-title">PRICING</h2>
+                        <p className="section-subtitle">
+                            Remote monitoring plans that keep your system at peak performance
+                        </p>
+                        <div className="pricing-grid">
+                            {plans.map((plan, index) => (
+                                <div className={`pricing-card ${plan.featured ? 'featured' : ''}`} key={index}>
+                                    <div className="pricing-tier">{plan.tier}</div>
+                                    <h3 className="pricing-name">{plan.name}</h3>
+                                    <div className="pricing-price">{plan.price}</div>
+                                    <div className="pricing-period">{plan.period}</div>
+                                    <ul className="pricing-features">
+                                        {plan.features.map((feature, i) => (
+                                            <li key={i}>{feature}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        function Contact() {
+            return (
+                <section className="contact" id="contact">
+                    <div className="container">
+                        <h2 className="section-title">CONTACT</h2>
+                        <p className="section-subtitle">
+                            Ready to optimize your energy system? Let's talk.
+                        </p>
+                        <div className="contact-info">
+                            <div className="contact-item">
+                                <div className="contact-label">Contact Person</div>
+                                <div className="contact-value">
+                                    <a>Edmund Stephan</a>
+                                </div>
+                            </div>
+                            <div className="contact-item">
+                                <div className="contact-label">Phone / WhatsApp</div>
+                                <div className="contact-value">
+                                    <a href="tel:+27823818002">+27 82 381 8002</a>
+                                </div>
+                            </div>
+                            <div className="contact-item">
+                                <div className="contact-label">Email</div>
+                                <div className="contact-value">
+                                    <a href="mailto:edmund@solarstitch.co.za">edmund@solarstitch.co.za</a>
+                                </div>
+                            </div>
+                            <div className="contact-item">
+                                <div className="contact-label">General Enquiries</div>
+                                <div className="contact-value">
+                                    <a href="mailto:admin@solarstitch.co.za">admin@solarstitch.co.za</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        /* ===== SERVICES PAGE ===== */
+        function ServicesPage({ navigateTo }) {
+            const services = [
+                {
+                    number: "01",
+                    title: "Remote Monitoring",
+                    description: "24/7 system surveillance. Real-time performance tracking. Proactive fault detection. Automated alerts. Monthly performance reports delivered to your inbox."
+                },
+                {
+                    number: "02",
+                    title: "Panel Cleaning",
+                    description: "Professional cleaning to restore optimal output. Dust, bird droppings, and debris removal. Before/after performance comparison. Scheduled maintenance plans."
+                },
+                {
+                    number: "03",
+                    title: "System Health Checks",
+                    description: "Comprehensive diagnostics across every component. Thermal imaging. Connection integrity testing. Inverter analysis. Detailed reporting with recommendations."
+                },
+                {
+                    number: "04",
+                    title: "Inverter Repairs",
+                    description: "Fault diagnosis and repair. Component replacement. Firmware troubleshooting. All major brands supported. Emergency callout available."
+                },
+                {
+                    number: "05",
+                    title: "Battery Maintenance",
+                    description: "State of health checks. Cell balancing. Terminal cleaning. Capacity testing. Lithium and lead-acid systems supported."
+                },
+                {
+                    number: "06",
+                    title: "Comms & Connectivity",
+                    description: "WiFi and cellular gateway issues. Monitoring portal setup. Data logger repairs. API integrations. Cloud connectivity troubleshooting."
+                },
+                {
+                    number: "07",
+                    title: "Electrical Repairs",
+                    description: "DC and AC wiring issues. Isolator replacements. Surge protection. Earth fault resolution. COC compliance checks."
+                },
+                {
+                    number: "08",
+                    title: "Firmware Updates",
+                    description: "Remote and on-site inverter updates. Battery BMS updates. Optimiser firmware. Performance tuning. Load setting adjustments."
+                },
+                {
+                    number: "09",
+                    title: "Emergency Callouts",
+                    description: "2-4 hour response for critical failures. After-hours support. Fault isolation. Temporary solutions to keep you running. Priority for maintenance plan members."
+                }
+            ];
+
+            return (
+                <div>
+                    <div className="page-header">
+                        <h1 className="section-title">SERVICES</h1>
+                        <p className="section-subtitle">
+                            Comprehensive maintenance and support to keep your solar system performing at its best
+                        </p>
+                    </div>
+                    
+                    <section className="services-section">
+                        <div className="container">
+                            <div className="services-grid">
+                                {services.map((service, index) => (
+                                    <div className="service-card" key={index}>
+                                        <div className="service-number">{service.number}</div>
+                                        <h3 className="service-title">{service.title}</h3>
+                                        <p className="service-desc">{service.description}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    <div className="cta-banner">
+                        <p>Need ongoing maintenance and monitoring? Check out our service plans.</p>
+                        <a className="cta-button" onClick={() => navigateTo('home')}>View Pricing</a>
+                    </div>
+                </div>
+            );
+        }
+
+        /* ===== PROJECTS PAGE ===== */
+        function ProjectsPage({ navigateTo }) {
+            return (
+                <div>
+                    <div className="page-header">
+                        <h1 className="section-title">PROJECTS</h1>
+                        <p className="section-subtitle">
+                            New installations, system upgrades, and specialized energy solutions
+                        </p>
+                    </div>
+                    
+                    <section className="projects-section">
+                        <div className="container">
+                            <div className="projects-grid">
+                                
+                                {/* Featured: Blitzer Compressor Retrofit */}
+                                <div className="project-card featured">
+                                    <div>
+                                        <div className="project-number">SPECIALTY RETROFIT</div>
+                                        <h3 className="project-title">BLITZER VSD COMPRESSOR RETROFITS</h3>
+                                        <p className="project-desc">
+                                            The Problem: Traditional refrigeration compressors draw 6-8× their running current during startup—creating
+                                            massive inrush that requires oversized inverters, making solar integration expensive or impossible.
+                                        </p>
+                                        <p className="project-desc">
+                                            The Solution: We retrofit your existing cooling system with Blitzer compressors controlled by ABB Variable
+                                            Speed Drives (VSDs). The VSD provides soft-start capability, ramping up smoothly with only 2-3× running current.
+                                            This eliminates the inrush problem entirely.
+                                        </p>
+                                        <p className="project-desc">
+                                            <strong>The Result:</strong> Your refrigeration system becomes solar-friendly. Instead of needing a 30kW inverter
+                                            to handle startup surge, a 12kW system can run the same cooling load. You save on inverter costs, reduce battery
+                                            requirements, and gain 20-40% energy efficiency from VSD speed modulation.
+                                        </p>
+                                        <p className="project-desc">
+                                            Perfect for supermarkets, cold rooms, butcheries, restaurants, and any commercial refrigeration running on
+                                            solar, generators, or backup power.
+                                        </p>
+                                        <ul className="project-features">
+                                            <li>ABB Variable Speed Drive control integration</li>
+                                            <li>Soft startup eliminates 6-8× inrush current problem</li>
+                                            <li>Reduce inverter size requirements by up to 60%</li>
+                                            <li>Speed modulation provides 20-40% energy savings</li>
+                                            <li>Peak demand shaving and grid cost reduction</li>
+                                            <li>Full system design, installation & commissioning</li>
+                                        </ul>
+                                    </div>
+                                    <div className="featured-visual">
+                                        <div className="visual-box">
+                                            <div className="visual-box-label">Startup Current</div>
+                                            <div className="visual-box-value">2-3× vs 6-8×</div>
+                                            <div className="visual-box-desc">VSD soft-start vs traditional</div>
+                                        </div>
+                                        <div className="visual-box">
+                                            <div className="visual-box-label">Inverter Reduction</div>
+                                            <div className="visual-box-value">Up to 60%</div>
+                                            <div className="visual-box-desc">Smaller inverter, same cooling</div>
+                                        </div>
+                                        <div className="visual-box">
+                                            <div className="visual-box-label">Energy Savings</div>
+                                            <div className="visual-box-value">20-40%</div>
+                                            <div className="visual-box-desc">VSD speed control efficiency</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* New Solar Installations */}
+                                <div className="project-card">
+                                    <div className="project-number">CORE SERVICE 01</div>
+                                    <h3 className="project-title">SOLAR INSTALLATIONS</h3>
+                                    <p className="project-desc">
+                                        Professional solar installations from concept to commissioning. We design and build complete
+                                        grid-tied, off-grid, and hybrid solar systems using premium Victron and SolarMD components.
+                                    </p>
+                                    <p className="project-desc">
+                                        Every installation includes detailed site assessment, custom system design, professional
+                                        mounting and electrical work, inverter configuration, battery integration, and full
+                                        commissioning with remote monitoring setup.
+                                    </p>
+                                    <ul className="project-features">
+                                        <li>Victron & SolarMD inverter systems</li>
+                                        <li>Grid-tied, off-grid & hybrid configurations</li>
+                                        <li>Residential, commercial & industrial scale</li>
+                                        <li>Battery storage integration (Lithium & Lead-acid)</li>
+                                        <li>Professional engineering design & load calculations</li>
+                                        <li>Municipal applications & Certificate of Compliance</li>
+                                        <li>Remote monitoring & VRM portal setup</li>
+                                        <li>Comprehensive warranty & after-sales support</li>
+                                    </ul>
+                                </div>
+
+                                {/* Solar Maintenance & Repair */}
+                                <div className="project-card">
+                                    <div className="project-number">CORE SERVICE 02</div>
+                                    <h3 className="project-title">SOLAR MAINTENANCE & REPAIR</h3>
+                                    <p className="project-desc">
+                                        Comprehensive maintenance and repair services to keep your solar system performing at peak efficiency.
+                                        From preventative maintenance to emergency repairs, we service all major brands and system types.
+                                    </p>
+                                    <p className="project-desc">
+                                        Our maintenance includes 24/7 remote monitoring, scheduled site visits, performance optimization,
+                                        firmware updates, and rapid response for system failures. We diagnose and repair inverters,
+                                        batteries, panels, communications, and all electrical components.
+                                    </p>
+                                    <ul className="project-features">
+                                        <li>24/7 remote monitoring & performance tracking</li>
+                                        <li>Scheduled maintenance plans (see Pricing)</li>
+                                        <li>Emergency callout service (2-4 hour response)</li>
+                                        <li>Inverter diagnostics, repair & replacement</li>
+                                        <li>Battery health checks & capacity testing</li>
+                                        <li>Panel cleaning & thermal imaging inspections</li>
+                                        <li>Communications troubleshooting & portal access</li>
+                                        <li>Firmware updates & system optimization</li>
+                                        <li>All major brands: Victron, SolarMD, SunSynk, Deye & more</li>
+                                    </ul>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </section>
+
+                    <div className="cta-banner">
+                        <p>Ready to transform your energy or refrigeration system? Get in touch for a consultation.</p>
+                        <a className="cta-button" onClick={() => navigateTo('home')}>Contact Edmund</a>
+                    </div>
+                </div>
+            );
+        }
+
+        function Footer() {
+            return (
+                <footer>
+                    <p>© 2025 Solar Stitch</p>
+                    <p style={{marginTop: '15px', fontSize: '0.9em'}}>
+                        Stitch. Optimize. Power.
+                    </p>
+                </footer>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
