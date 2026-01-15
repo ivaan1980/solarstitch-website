@@ -229,15 +229,15 @@ const SolarStitchDashboard = () => {
               color: colors.light 
             }}>STITCH</span>
           </div>
-          <h1 style={{ 
-            fontSize: '14px', 
-            fontWeight: '400', 
+          <h1 style={{
+            fontSize: '14px',
+            fontWeight: '400',
             letterSpacing: '6px',
             color: colors.secondary,
             textTransform: 'uppercase',
             marginBottom: '8px'
           }}>
-            Observatory Science Centre
+            Sample Commercial Facility
           </h1>
           <p style={{ 
             color: colors.muted, 
@@ -806,7 +806,7 @@ const SolarStitchDashboard = () => {
             60 kWp · {numPanels} × {panelWattage}W Panels · 2 × 30kW Solis Inverters · Zero Export
           </p>
           <p style={{ color: colors.light, fontSize: '11px' }}>
-            Project Reference: SS-2026-SCI-002
+            Example System Design & Financial Analysis
           </p>
         </div>
       </div>

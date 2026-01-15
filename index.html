@@ -7,6 +7,7 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -652,6 +653,7 @@
                     {currentPage === 'home' && <HomePage navigateTo={navigateTo} />}
                     {currentPage === 'services' && <ServicesPage navigateTo={navigateTo} />}
                     {currentPage === 'projects' && <ProjectsPage navigateTo={navigateTo} />}
+                    {currentPage === 'example' && <ExampleAnalysisPage navigateTo={navigateTo} />}
                     <Footer />
                 </div>
             );
@@ -670,6 +672,7 @@
                             <li><a onClick={() => navigateTo('home')} className={currentPage === 'home' ? 'active' : ''}>Home</a></li>
                             <li><a onClick={() => navigateTo('services')} className={currentPage === 'services' ? 'active' : ''}>Services</a></li>
                             <li><a onClick={() => navigateTo('projects')} className={currentPage === 'projects' ? 'active' : ''}>What We Do</a></li>
+                            <li><a onClick={() => navigateTo('example')} className={currentPage === 'example' ? 'active' : ''}>Example Analysis</a></li>
                             <li><a onClick={() => navigateTo('home')} className="">Contact</a></li>
                         </ul>
                     </div>
@@ -1124,6 +1127,356 @@
 
                     <div className="cta-banner">
                         <p>Ready to cut your energy costs? Get in touch for a free consultation.</p>
+                        <div className="hero-buttons" style={{justifyContent: 'center', marginTop: '20px'}}>
+                            <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
+                            <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        /* ===== EXAMPLE ANALYSIS PAGE ===== */
+        function ExampleAnalysisPage({ navigateTo }) {
+            const { useState, useMemo } = React;
+            const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, BarChart, Bar, ComposedChart } = Recharts;
+
+            const [viewMode, setViewMode] = useState('summer');
+            const [showPPA, setShowPPA] = useState(true);
+            const [dayType, setDayType] = useState('weekday');
+
+            const colors = {
+                primary: '#1a1a1a',
+                secondary: '#666666',
+                light: '#999999',
+                background: '#f8f8f8',
+                white: '#ffffff',
+                text: '#333333',
+                muted: '#888888',
+                border: '#e5e5e5',
+            };
+
+            const systemSize = 60;
+            const numPanels = 110;
+            const panelWattage = 550;
+            const energyRate = 2.6099;
+            const ppaStartRate = 1.9574;
+            const ppaEscalation = 0.06;
+            const gridEscalation = 0.08;
+
+            const seasonalProfiles = {
+                summer: { name: 'Summer (December)', psh: 6.5, baseLoadKw: 8, peakLoadKw: 52, visitorFactor: 1.4, openHour: 8.5, closeHour: dayType === 'saturday' ? 14 : 17, sunriseHour: 5.5, sunsetHour: 19.5 },
+                winter: { name: 'Winter (June)', psh: 3.3, baseLoadKw: 8, peakLoadKw: 48, visitorFactor: 1.3, openHour: 8.5, closeHour: dayType === 'saturday' ? 14 : 17, sunriseHour: 7.5, sunsetHour: 17.5 }
+            };
+
+            const hourlyData = useMemo(() => {
+                const profile = seasonalProfiles[viewMode];
+                const data = [];
+                const solarNoon = 12.5;
+                const solarSpread = viewMode === 'winter' ? 3.0 : 4.0;
+
+                for (let hour = 0; hour < 24; hour++) {
+                    let loadKw = profile.baseLoadKw;
+                    if (hour === Math.floor(profile.openHour)) {
+                        loadKw += (profile.peakLoadKw - profile.baseLoadKw) * 0.5;
+                    } else if (hour > profile.openHour && hour < profile.closeHour) {
+                        const hourInOp = hour - profile.openHour;
+                        const opDuration = profile.closeHour - profile.openHour;
+                        let visitorCurve = hourInOp < 2 ? 0.5 + hourInOp * 0.2 : hourInOp < opDuration - 2 ? 0.9 + 0.1 * Math.sin((hourInOp - 2) / (opDuration - 4) * Math.PI) : 0.7 - (hourInOp - (opDuration - 2)) * 0.15;
+                        loadKw += (profile.peakLoadKw - profile.baseLoadKw) * visitorCurve * profile.visitorFactor;
+                    } else if (hour === Math.floor(profile.closeHour)) {
+                        loadKw += (profile.peakLoadKw - profile.baseLoadKw) * 0.4;
+                    } else if (hour === Math.floor(profile.closeHour) + 1) {
+                        loadKw += (profile.peakLoadKw - profile.baseLoadKw) * 0.15;
+                    } else if (hour >= 22 || hour < 6) {
+                        loadKw = profile.baseLoadKw * 0.9;
+                    } else {
+                        loadKw = profile.baseLoadKw * 1.1;
+                    }
+
+                    let solarKw = 0;
+                    let potentialSolar = 0;
+                    if (hour >= profile.sunriseHour && hour <= profile.sunsetHour) {
+                        const hourDecimal = hour + 0.5;
+                        const solarFactor = Math.exp(-Math.pow(hourDecimal - solarNoon, 2) / (2 * Math.pow(solarSpread, 2)));
+                        potentialSolar = systemSize * 0.85 * solarFactor;
+                        solarKw = Math.min(potentialSolar, loadKw);
+                    }
+
+                    data.push({
+                        hour,
+                        time: `${hour.toString().padStart(2, '0')}:00`,
+                        load: Math.round(loadKw * 10) / 10,
+                        solar: Math.round(solarKw * 10) / 10,
+                        potentialSolar: Math.round(potentialSolar * 10) / 10,
+                        curtailed: Math.round(Math.max(0, potentialSolar - loadKw) * 10) / 10,
+                        gridImport: Math.round(Math.max(0, loadKw - solarKw) * 10) / 10,
+                    });
+                }
+                return data;
+            }, [viewMode, dayType]);
+
+            const dailyTotals = useMemo(() => {
+                const totalLoad = hourlyData.reduce((sum, h) => sum + h.load, 0);
+                const totalSolar = hourlyData.reduce((sum, h) => sum + h.solar, 0);
+                const totalPotential = hourlyData.reduce((sum, h) => sum + h.potentialSolar, 0);
+                const totalImport = hourlyData.reduce((sum, h) => sum + h.gridImport, 0);
+                const costWithoutSolar = totalLoad * energyRate;
+                const costWithSolar = totalImport * energyRate;
+                const ppaCost = totalSolar * ppaStartRate;
+
+                return {
+                    totalLoad: Math.round(totalLoad),
+                    totalSolar: Math.round(totalSolar),
+                    totalImport: Math.round(totalImport),
+                    selfConsumptionRate: totalPotential > 0 ? Math.round((totalSolar / totalPotential) * 100) : 0,
+                    solarCoverage: totalLoad > 0 ? Math.round((totalSolar / totalLoad) * 100) : 0,
+                    costWithoutSolar: Math.round(costWithoutSolar),
+                    costWithSolar: Math.round(costWithSolar),
+                    ppaCost: Math.round(ppaCost),
+                    savingsVsGrid: Math.round(costWithoutSolar - costWithSolar),
+                    savingsWithPPA: Math.round(costWithoutSolar - (totalImport * energyRate + ppaCost)),
+                    peakLoad: Math.max(...hourlyData.map(h => h.load)),
+                    peakSolar: Math.max(...hourlyData.map(h => h.solar)),
+                };
+            }, [hourlyData]);
+
+            const ppaYears = useMemo(() => {
+                const years = [];
+                let cumSavings = 0;
+                for (let year = 1; year <= 20; year++) {
+                    const degradation = Math.pow(0.995, year - 1);
+                    const annualGen = 89790 * degradation * 0.92;
+                    const gridRate = energyRate * Math.pow(1 + gridEscalation, year - 1);
+                    const ppaRate = ppaStartRate * Math.pow(1 + ppaEscalation, year - 1);
+                    const savings = annualGen * gridRate - annualGen * ppaRate;
+                    cumSavings += savings;
+                    years.push({ year, gridRate: gridRate.toFixed(2), ppaRate: ppaRate.toFixed(2), savings: Math.round(savings), cumSavings: Math.round(cumSavings) });
+                }
+                return years;
+            }, []);
+
+            const profile = seasonalProfiles[viewMode];
+
+            return (
+                <div>
+                    <div className="page-header">
+                        <h1 className="section-title">EXAMPLE ANALYSIS</h1>
+                        <p className="section-subtitle">
+                            Interactive system design and financial analysis for a 60kW commercial solar installation
+                        </p>
+                    </div>
+
+                    <div style={{ backgroundColor: colors.background, padding: '40px 60px' }}>
+                        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+
+                            {/* Header */}
+                            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+                                <h2 style={{ fontSize: '14px', fontWeight: '400', letterSpacing: '6px', color: colors.secondary, textTransform: 'uppercase', marginBottom: '8px' }}>
+                                    Sample Commercial Facility
+                                </h2>
+                                <p style={{ color: colors.muted, fontSize: '13px', letterSpacing: '2px' }}>
+                                    60 kWp Solar System — Zero Export Configuration
+                                </p>
+                            </div>
+
+                            {/* Controls */}
+                            <div style={{ backgroundColor: colors.white, borderRadius: '8px', padding: '20px', marginBottom: '24px', display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+                                <button onClick={() => setViewMode('summer')} style={{ padding: '12px 32px', borderRadius: '4px', border: viewMode === 'summer' ? '2px solid #1a1a1a' : '1px solid #e5e5e5', backgroundColor: viewMode === 'summer' ? '#1a1a1a' : '#fff', color: viewMode === 'summer' ? '#fff' : '#666', fontSize: '12px', fontWeight: '500', letterSpacing: '2px', textTransform: 'uppercase', cursor: 'pointer' }}>Summer</button>
+                                <button onClick={() => setViewMode('winter')} style={{ padding: '12px 32px', borderRadius: '4px', border: viewMode === 'winter' ? '2px solid #1a1a1a' : '1px solid #e5e5e5', backgroundColor: viewMode === 'winter' ? '#1a1a1a' : '#fff', color: viewMode === 'winter' ? '#fff' : '#666', fontSize: '12px', fontWeight: '500', letterSpacing: '2px', textTransform: 'uppercase', cursor: 'pointer' }}>Winter</button>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginLeft: '24px' }}>
+                                    <input type="checkbox" checked={showPPA} onChange={(e) => setShowPPA(e.target.checked)} style={{ width: '16px', height: '16px', accentColor: '#1a1a1a' }} />
+                                    <span style={{ color: colors.secondary, fontSize: '13px' }}>Show PPA Analysis</span>
+                                </label>
+                                <div style={{ display: 'flex', gap: '8px', marginLeft: '24px', padding: '4px', backgroundColor: colors.background, borderRadius: '4px' }}>
+                                    <button onClick={() => setDayType('weekday')} style={{ padding: '8px 16px', borderRadius: '3px', border: 'none', backgroundColor: dayType === 'weekday' ? '#1a1a1a' : 'transparent', color: dayType === 'weekday' ? '#fff' : '#666', fontSize: '11px', fontWeight: '500', cursor: 'pointer' }}>Weekday</button>
+                                    <button onClick={() => setDayType('saturday')} style={{ padding: '8px 16px', borderRadius: '3px', border: 'none', backgroundColor: dayType === 'saturday' ? '#1a1a1a' : 'transparent', color: dayType === 'saturday' ? '#fff' : '#666', fontSize: '11px', fontWeight: '500', cursor: 'pointer' }}>Saturday</button>
+                                </div>
+                            </div>
+
+                            {/* KPI Cards */}
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+                                {[
+                                    { label: 'DAILY LOAD', value: `${dailyTotals.totalLoad} kWh`, sub: 'Total consumption' },
+                                    { label: 'SOLAR USED', value: `${dailyTotals.totalSolar} kWh`, sub: 'Self-consumed' },
+                                    { label: 'SELF-CONSUMPTION', value: `${dailyTotals.selfConsumptionRate}%`, sub: 'Utilization rate' },
+                                    { label: 'SOLAR COVERAGE', value: `${dailyTotals.solarCoverage}%`, sub: 'Of total load' },
+                                    { label: 'GRID IMPORT', value: `${dailyTotals.totalImport} kWh`, sub: 'From utility' },
+                                    { label: 'DAILY SAVINGS', value: `R ${dailyTotals.savingsVsGrid}`, sub: 'vs. no solar' },
+                                ].map((item, i) => (
+                                    <div key={i} style={{ backgroundColor: colors.white, borderRadius: '8px', padding: '20px', textAlign: 'center' }}>
+                                        <div style={{ fontSize: '10px', fontWeight: '500', letterSpacing: '2px', color: colors.muted, marginBottom: '8px' }}>{item.label}</div>
+                                        <div style={{ fontSize: '28px', fontWeight: '300', color: colors.primary, marginBottom: '4px' }}>{item.value}</div>
+                                        <div style={{ fontSize: '11px', color: colors.light }}>{item.sub}</div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Season Info */}
+                            <div style={{ backgroundColor: colors.white, borderRadius: '8px', padding: '24px', marginBottom: '24px', borderLeft: '4px solid #1a1a1a' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '24px', textAlign: 'center' }}>
+                                    <div><div style={{ fontSize: '10px', letterSpacing: '2px', color: colors.muted, marginBottom: '4px' }}>SEASON</div><div style={{ fontSize: '16px', fontWeight: '500', color: colors.primary }}>{profile.name}</div></div>
+                                    <div><div style={{ fontSize: '10px', letterSpacing: '2px', color: colors.muted, marginBottom: '4px' }}>PEAK SUN HOURS</div><div style={{ fontSize: '24px', fontWeight: '300', color: colors.primary }}>{profile.psh}</div></div>
+                                    <div><div style={{ fontSize: '10px', letterSpacing: '2px', color: colors.muted, marginBottom: '4px' }}>PEAK LOAD</div><div style={{ fontSize: '24px', fontWeight: '300', color: colors.primary }}>{dailyTotals.peakLoad} kW</div></div>
+                                    <div><div style={{ fontSize: '10px', letterSpacing: '2px', color: colors.muted, marginBottom: '4px' }}>PEAK SOLAR</div><div style={{ fontSize: '24px', fontWeight: '300', color: colors.primary }}>{dailyTotals.peakSolar} kW</div></div>
+                                    <div><div style={{ fontSize: '10px', letterSpacing: '2px', color: colors.muted, marginBottom: '4px' }}>OPERATING</div><div style={{ fontSize: '16px', fontWeight: '400', color: colors.primary }}>{dayType === 'saturday' ? '08:30 – 14:00' : '08:30 – 17:00'}</div><div style={{ fontSize: '11px', color: colors.light, marginTop: '2px' }}>{dayType === 'saturday' ? 'Saturday' : 'Mon – Fri'}</div></div>
+                                </div>
+                            </div>
+
+                            {/* Main Chart */}
+                            <div style={{ backgroundColor: colors.white, borderRadius: '8px', padding: '24px', marginBottom: '24px' }}>
+                                <h2 style={{ fontSize: '11px', fontWeight: '500', letterSpacing: '3px', color: colors.secondary, marginBottom: '24px', textTransform: 'uppercase' }}>Daily Load vs Solar Generation — Zero Export</h2>
+                                <ResponsiveContainer width="100%" height={380}>
+                                    <ComposedChart data={hourlyData}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke={colors.border} />
+                                        <XAxis dataKey="time" stroke={colors.muted} tick={{ fontSize: 11 }} />
+                                        <YAxis stroke={colors.muted} tick={{ fontSize: 11 }} label={{ value: 'kW', angle: -90, position: 'insideLeft', fill: colors.muted, fontSize: 11 }} />
+                                        <Tooltip />
+                                        <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                                        <Area type="monotone" dataKey="potentialSolar" name="Potential Solar" fill={colors.light} fillOpacity={0.2} stroke={colors.light} strokeWidth={1} strokeDasharray="5 5" />
+                                        <Line type="monotone" dataKey="load" name="Building Load" stroke={colors.secondary} strokeWidth={2} dot={false} />
+                                        <Area type="monotone" dataKey="solar" name="Solar Used" fill={colors.primary} fillOpacity={0.3} stroke={colors.primary} strokeWidth={2} />
+                                        <Area type="monotone" dataKey="curtailed" name="Curtailed" fill="#cc0000" fillOpacity={0.3} stroke="#cc0000" strokeWidth={1} />
+                                    </ComposedChart>
+                                </ResponsiveContainer>
+                            </div>
+
+                            {/* Cost Comparison */}
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginBottom: '24px' }}>
+                                <div style={{ backgroundColor: colors.white, borderRadius: '8px', padding: '24px' }}>
+                                    <h2 style={{ fontSize: '11px', fontWeight: '500', letterSpacing: '3px', color: colors.secondary, marginBottom: '24px', textTransform: 'uppercase' }}>Hourly Grid Import</h2>
+                                    <ResponsiveContainer width="100%" height={240}>
+                                        <BarChart data={hourlyData}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke={colors.border} />
+                                            <XAxis dataKey="time" stroke={colors.muted} tick={{ fontSize: 9 }} />
+                                            <YAxis stroke={colors.muted} tick={{ fontSize: 10 }} />
+                                            <Tooltip />
+                                            <Bar dataKey="gridImport" name="Grid Import" fill={colors.secondary} radius={[2, 2, 0, 0]} />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                                <div style={{ backgroundColor: colors.white, borderRadius: '8px', padding: '24px' }}>
+                                    <h2 style={{ fontSize: '11px', fontWeight: '500', letterSpacing: '3px', color: colors.secondary, marginBottom: '24px', textTransform: 'uppercase' }}>Daily Cost Comparison</h2>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                        {[
+                                            { label: 'Without Solar', value: dailyTotals.costWithoutSolar, percent: 100, color: colors.muted },
+                                            { label: 'Cash Purchase', value: dailyTotals.costWithSolar, percent: (dailyTotals.costWithSolar / dailyTotals.costWithoutSolar) * 100, color: colors.secondary },
+                                            { label: 'PPA Option', value: dailyTotals.costWithSolar + dailyTotals.ppaCost, percent: ((dailyTotals.costWithSolar + dailyTotals.ppaCost) / dailyTotals.costWithoutSolar) * 100, color: colors.primary },
+                                        ].map((item, i) => (
+                                            <div key={i}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                                    <span style={{ fontSize: '12px', color: colors.text }}>{item.label}</span>
+                                                    <span style={{ fontSize: '13px', fontWeight: '500', color: colors.primary }}>R {item.value}</span>
+                                                </div>
+                                                <div style={{ height: '8px', backgroundColor: colors.background, borderRadius: '4px', overflow: 'hidden' }}>
+                                                    <div style={{ height: '100%', width: `${item.percent}%`, backgroundColor: item.color, borderRadius: '4px' }}></div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        <div style={{ borderTop: '1px solid #e5e5e5', paddingTop: '16px', marginTop: '8px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                            <div><div style={{ fontSize: '10px', letterSpacing: '1px', color: colors.muted, marginBottom: '4px' }}>CASH SAVINGS</div><div style={{ fontSize: '20px', fontWeight: '400', color: colors.primary }}>R {dailyTotals.savingsVsGrid}</div></div>
+                                            <div><div style={{ fontSize: '10px', letterSpacing: '1px', color: colors.muted, marginBottom: '4px' }}>PPA SAVINGS</div><div style={{ fontSize: '20px', fontWeight: '400', color: colors.primary }}>R {dailyTotals.savingsWithPPA}</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* PPA Analysis */}
+                            {showPPA && (
+                                <div style={{ backgroundColor: colors.white, borderRadius: '8px', padding: '24px', marginBottom: '24px' }}>
+                                    <h2 style={{ fontSize: '11px', fontWeight: '500', letterSpacing: '3px', color: colors.secondary, marginBottom: '24px', textTransform: 'uppercase' }}>20-Year PPA vs Grid Rate Projection</h2>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px' }}>
+                                        <ResponsiveContainer width="100%" height={280}>
+                                            <LineChart data={ppaYears}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke={colors.border} />
+                                                <XAxis dataKey="year" stroke={colors.muted} tick={{ fontSize: 10 }} />
+                                                <YAxis stroke={colors.muted} tick={{ fontSize: 10 }} />
+                                                <Tooltip />
+                                                <Legend />
+                                                <Line type="monotone" dataKey="gridRate" name="Grid Rate (8%)" stroke={colors.muted} strokeWidth={2} dot={false} />
+                                                <Line type="monotone" dataKey="ppaRate" name="PPA Rate (6%)" stroke={colors.primary} strokeWidth={2} dot={false} />
+                                            </LineChart>
+                                        </ResponsiveContainer>
+                                        <ResponsiveContainer width="100%" height={280}>
+                                            <AreaChart data={ppaYears}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke={colors.border} />
+                                                <XAxis dataKey="year" stroke={colors.muted} tick={{ fontSize: 10 }} />
+                                                <YAxis stroke={colors.muted} tick={{ fontSize: 10 }} tickFormatter={(v) => `R${(v/1000000).toFixed(1)}M`} />
+                                                <Tooltip formatter={(v) => `R ${v.toLocaleString()}`} />
+                                                <Legend />
+                                                <Area type="monotone" dataKey="cumSavings" name="Cumulative Savings" fill={colors.primary} fillOpacity={0.2} stroke={colors.primary} strokeWidth={2} />
+                                            </AreaChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginTop: '24px', paddingTop: '24px', borderTop: '1px solid #e5e5e5' }}>
+                                        {[
+                                            { label: 'DAY 1 PPA RATE', value: 'R 1.96/kWh', sub: '25% below grid' },
+                                            { label: 'YEAR 10 PPA RATE', value: 'R 3.50/kWh', sub: 'vs R 5.63 grid' },
+                                            { label: 'YEAR 20 PPA RATE', value: 'R 6.28/kWh', sub: 'vs R 12.16 grid' },
+                                            { label: '20-YEAR SAVINGS', value: 'R 3.67M', sub: 'NPV: R 1.14M' },
+                                        ].map((item, i) => (
+                                            <div key={i} style={{ textAlign: 'center' }}>
+                                                <div style={{ fontSize: '10px', letterSpacing: '1px', color: colors.muted, marginBottom: '8px' }}>{item.label}</div>
+                                                <div style={{ fontSize: '20px', fontWeight: '400', color: colors.primary }}>{item.value}</div>
+                                                <div style={{ fontSize: '11px', color: colors.light }}>{item.sub}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Financing Options */}
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', marginBottom: '24px' }}>
+                                <div style={{ backgroundColor: colors.white, borderRadius: '8px', padding: '24px', borderTop: '4px solid #666' }}>
+                                    <h3 style={{ fontSize: '11px', fontWeight: '500', letterSpacing: '3px', color: colors.secondary, marginBottom: '20px', textTransform: 'uppercase' }}>Option A: Cash Purchase</h3>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                        {[{ label: 'Total Investment', value: 'R 916,407' }, { label: 'Year 1 Savings', value: '~R 215,000' }, { label: 'Payback Period', value: '~4.3 years' }].map((item, i) => (
+                                            <div key={i} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <span style={{ color: colors.secondary, fontSize: '13px' }}>{item.label}</span>
+                                                <span style={{ color: colors.primary, fontWeight: '500', fontSize: '13px' }}>{item.value}</span>
+                                            </div>
+                                        ))}
+                                        <div style={{ borderTop: '1px solid #e5e5e5', paddingTop: '12px', marginTop: '8px' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <span style={{ color: colors.text, fontWeight: '500' }}>20-Year Net Benefit</span>
+                                                <span style={{ color: colors.primary, fontWeight: '600', fontSize: '18px' }}>~R 8.4M</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={{ backgroundColor: colors.white, borderRadius: '8px', padding: '24px', borderTop: '4px solid #1a1a1a' }}>
+                                    <h3 style={{ fontSize: '11px', fontWeight: '500', letterSpacing: '3px', color: colors.secondary, marginBottom: '20px', textTransform: 'uppercase' }}>Option B: PPA (Zero Upfront)</h3>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                        {[{ label: 'Upfront Cost', value: 'R 0' }, { label: 'Starting Rate', value: 'R 1.96/kWh (25% off)' }, { label: 'Annual Escalation', value: '6% (vs 8% grid)' }].map((item, i) => (
+                                            <div key={i} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <span style={{ color: colors.secondary, fontSize: '13px' }}>{item.label}</span>
+                                                <span style={{ color: colors.primary, fontWeight: '500', fontSize: '13px' }}>{item.value}</span>
+                                            </div>
+                                        ))}
+                                        <div style={{ borderTop: '1px solid #e5e5e5', paddingTop: '12px', marginTop: '8px' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <span style={{ color: colors.text, fontWeight: '500' }}>20-Year Savings</span>
+                                                <span style={{ color: colors.primary, fontWeight: '600', fontSize: '18px' }}>R 3.67M</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Footer */}
+                            <div style={{ textAlign: 'center', padding: '24px 0', borderTop: '1px solid #e5e5e5', marginTop: '24px' }}>
+                                <p style={{ color: colors.muted, fontSize: '11px', letterSpacing: '1px', marginBottom: '4px' }}>
+                                    60 kWp · {numPanels} × {panelWattage}W Panels · 2 × 30kW Solis Inverters · Zero Export
+                                </p>
+                                <p style={{ color: colors.light, fontSize: '11px' }}>
+                                    Example System Design & Financial Analysis
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="cta-banner">
+                        <p>Want a custom analysis like this for your facility? Get in touch.</p>
                         <div className="hero-buttons" style={{justifyContent: 'center', marginTop: '20px'}}>
                             <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
                             <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
