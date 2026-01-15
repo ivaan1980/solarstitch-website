@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solar Stitch | Solar Installations, Maintenance & Bitzer VSD Compressor Retrofits</title>
+    <title>Solar Stitch | Energy Efficiency, Solar Installations & Bitzer VSD Compressor Retrofits</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -452,6 +452,36 @@
             margin-top: 8px;
         }
 
+        /* FAQ Section */
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            padding: 30px;
+            background: var(--white);
+            border: 1px solid var(--lighter-gray);
+        }
+
+        .faq-question {
+            font-size: 1em;
+            font-weight: 500;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            color: var(--black);
+        }
+
+        .faq-answer {
+            font-size: 0.9em;
+            color: var(--mid-gray);
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
         /* Contact Section */
         .contact {
             background: var(--white);
@@ -530,6 +560,10 @@
 
             .services-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .faq-grid {
+                grid-template-columns: 1fr;
             }
 
             .projects-grid {
@@ -635,7 +669,7 @@
                         <ul className="nav-links">
                             <li><a onClick={() => navigateTo('home')} className={currentPage === 'home' ? 'active' : ''}>Home</a></li>
                             <li><a onClick={() => navigateTo('services')} className={currentPage === 'services' ? 'active' : ''}>Services</a></li>
-                            <li><a onClick={() => navigateTo('projects')} className={currentPage === 'projects' ? 'active' : ''}>Projects</a></li>
+                            <li><a onClick={() => navigateTo('projects')} className={currentPage === 'projects' ? 'active' : ''}>What We Do</a></li>
                             <li><a onClick={() => navigateTo('home')} className="">Contact</a></li>
                         </ul>
                     </div>
@@ -648,7 +682,9 @@
             return (
                 <div>
                     <Hero navigateTo={navigateTo} />
-                    <About />
+                    <AboutSolarStitch />
+                    <EnergyWasteProblem navigateTo={navigateTo} />
+                    <FAQ />
                     <Contact />
                 </div>
             );
@@ -664,52 +700,172 @@
                     </div>
                     <p className="hero-tagline">Stitch. Optimize. Power.</p>
                     <p className="hero-description">
-                        Expert solar installations, comprehensive maintenance, and specialized <a href="https://www.bitzer.de/za/en/" target="_blank" rel="noopener noreferrer" style={{color: 'inherit', textDecoration: 'underline'}}>Bitzer</a> VSD compressor retrofits.<br />
-                        Transform your energy systems and refrigeration equipment for maximum solar compatibility.
+                        Your freezers, air conditioners, and cooling systems are wasting energy. We fix that.<br />
+                        Whether you're running on solar, the grid, or generators, we help you save money through smart energy management, efficient equipment retrofits, and optimized systems.
                     </p>
                     <div className="hero-buttons">
-                        <a className="cta-button" onClick={() => navigateTo('services')}>Our Services</a>
-                        <a className="cta-button primary" onClick={() => navigateTo('projects')}>View Projects</a>
+                        <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
+                        <a className="cta-button" onClick={() => navigateTo('projects')}>Learn About Bitzer Retrofits</a>
+                        <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
                     </div>
                 </section>
             );
         }
 
-        function About() {
+        function AboutSolarStitch() {
             return (
                 <section className="about" id="about">
                     <div className="container">
-                        <h2 className="section-title">BEYOND PANELS</h2>
-                        <p className="section-subtitle">
-                            We install, maintain, and optimize complete energy systems.
-                        </p>
+                        <h2 className="section-title">ABOUT SOLAR STITCH</h2>
                         <div className="about-content">
                             <p className="about-text">
-                                Solar Stitch delivers comprehensive energy solutions across three core specializations:
-                                Professional solar installations from design to commissioning. Complete system maintenance
-                                and repair services with 24/7 monitoring. And our unique specialty—<a href="https://www.bitzer.de/za/en/" target="_blank" rel="noopener noreferrer" style={{color: 'inherit', textDecoration: 'underline'}}>Bitzer</a> VSD compressor
-                                retrofits that transform refrigeration systems to run efficiently on solar and inverter
-                                power without massive startup surges.
+                                We're a team of energy professionals—electrical engineers, electronic engineers, and seasoned business leaders—with over 20 years of experience across solar, refrigeration, metering, and energy management.
                             </p>
+                            <p className="about-text" style={{marginTop: '25px'}}>
+                                We spotted a problem: Most businesses waste thousands every month on inefficient cooling and air conditioning. Traditional solar installations ignore this. We don't.
+                            </p>
+                            <p className="about-text" style={{marginTop: '25px'}}>
+                                Our focus is simple: Help Cape Town and Bloemfontein businesses and homeowners cut energy costs through smarter, more efficient systems. Whether it's a small home, a strip mall, a restaurant with a walk-in freezer, or a supermarket, we measure the waste, design the solution, and install it.
+                            </p>
+                            <p className="about-text" style={{marginTop: '25px'}}>
+                                We're ABB-trained, metering experts, and specialists in making cooling systems work efficiently with solar, backup power, and grid energy. We're also honest—we'll tell you if you don't need something, and we'll prioritize your wallet.
+                            </p>
+                            <p className="about-text" style={{marginTop: '40px', fontWeight: '500', letterSpacing: '2px'}}>
+                                Stitch. Optimize. Power.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            );
+        }
 
-                            <div className="stats-grid">
-                                <div className="stat-item">
-                                    <div className="stat-title">Solar Partners</div>
-                                    <div className="stat-value">Victron & SolarMD</div>
-                                </div>
-                                <div className="stat-item">
-                                    <div className="stat-title">VSD Control</div>
-                                    <div className="stat-value">ABB & <a href="https://www.bitzer.de/za/en/" target="_blank" rel="noopener noreferrer" style={{color: 'inherit', textDecoration: 'underline'}}>Bitzer</a></div>
-                                </div>
-                                <div className="stat-item">
-                                    <div className="stat-title">Data & Metering</div>
-                                    <div className="stat-value">Phy Engineering</div>
-                                </div>
-                                <div className="stat-item">
-                                    <div className="stat-title">Response</div>
-                                    <div className="stat-value">2-4 Hour Emergency</div>
-                                </div>
+        function EnergyWasteProblem({ navigateTo }) {
+            return (
+                <section className="services-section" id="energy-waste">
+                    <div className="container">
+                        <h2 className="section-title">THE ENERGY WASTE PROBLEM</h2>
+                        <p className="section-subtitle">
+                            Freezers, air conditioners, and cooling systems are one of the biggest energy drains in homes and businesses. A single walk-in freezer can use as much power as ten homes.
+                        </p>
+                        <p className="section-subtitle" style={{marginTop: '-40px'}}>
+                            The worse part? Most systems are sized too conservatively, run inefficiently, or start up with massive power surges that make solar integration expensive or impossible.
+                        </p>
+
+                        <h3 className="section-title" style={{fontSize: '1.5em', marginTop: '60px'}}>WHAT WE DO</h3>
+                        <p className="section-subtitle">We specialize in three core areas:</p>
+
+                        <div className="services-grid">
+                            <div className="service-card">
+                                <div className="service-number">01</div>
+                                <h3 className="service-title">Smart Energy Management</h3>
+                                <p className="service-desc">
+                                    Real-time metering and monitoring to see exactly where your money is going. Then we fix it.
+                                </p>
                             </div>
+                            <div className="service-card">
+                                <div className="service-number">02</div>
+                                <h3 className="service-title">Cooling System Optimization</h3>
+                                <p className="service-desc">
+                                    From retrofit design to installation, we make your freezers and air conditioning units efficient, solar-friendly, and cost-effective.
+                                </p>
+                            </div>
+                            <div className="service-card">
+                                <div className="service-number">03</div>
+                                <h3 className="service-title">Complete Solar Integration</h3>
+                                <p className="service-desc">
+                                    Professional solar installations designed to work with your real energy needs—not just the panels, but the whole system.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="about-content" style={{marginTop: '60px'}}>
+                            <p className="about-text">
+                                Our team brings 20+ years of experience in refrigeration, solar, electrical engineering, and energy management. We understand your systems. We speak your language. And we know how to save you money.
+                            </p>
+                        </div>
+
+                        <div className="stats-grid" style={{marginTop: '60px'}}>
+                            <div className="stat-item">
+                                <div className="stat-title">Solar Partners</div>
+                                <div className="stat-value">Victron & SolarMD</div>
+                            </div>
+                            <div className="stat-item">
+                                <div className="stat-title">VSD Control</div>
+                                <div className="stat-value">ABB & <a href="https://www.bitzer.de/za/en/" target="_blank" rel="noopener noreferrer" style={{color: 'inherit', textDecoration: 'underline'}}>Bitzer</a></div>
+                            </div>
+                            <div className="stat-item">
+                                <div className="stat-title">Data & Metering</div>
+                                <div className="stat-value">Phy Engineering</div>
+                            </div>
+                            <div className="stat-item">
+                                <div className="stat-title">Response</div>
+                                <div className="stat-value">2-4 Hour Emergency</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        function FAQ() {
+            const faqs = [
+                {
+                    question: "Why choose a startup?",
+                    answer: "We're new, but our team isn't. We bring 20+ years of experience in energy, refrigeration, and solar. We're focused on doing one thing really well—solving your energy waste problem—rather than being a generalist solar company. Plus, you get personalized service. You're not just a ticket number."
+                },
+                {
+                    question: "What if I need emergency support?",
+                    answer: "We offer 2-4 hour emergency response for critical failures. If your freezer goes down or your air con fails, we prioritize it."
+                },
+                {
+                    question: "How do I know you can actually help?",
+                    answer: "We'll do a free consultation and energy audit. We'll show you exactly where your energy waste is, what's causing it, and what solutions make sense for your budget. No pressure, no sales pitch."
+                },
+                {
+                    question: "Can you retrofit my existing compressor?",
+                    answer: "Probably. Bitzer retrofits work for most commercial refrigeration systems. We'll assess your equipment and let you know what's possible."
+                },
+                {
+                    question: "How long does an installation take?",
+                    answer: "It depends on your system size and complexity. A retrofit might take a few days. A solar install could be 1-2 weeks. We'll give you a timeline after the initial assessment."
+                },
+                {
+                    question: "Where do you operate?",
+                    answer: "We're based in Cape Town with a branch in Bloemfontein. We service both regions and can discuss other areas on a case-by-case basis."
+                },
+                {
+                    question: "What's your warranty?",
+                    answer: "We stand behind our work. Specific warranties depend on the component and service—we'll detail this clearly in your quote."
+                },
+                {
+                    question: "Do you only do solar?",
+                    answer: "No. We specialize in cooling and air conditioning efficiency, energy optimization, and metering. Solar is part of the solution, but not the whole story."
+                },
+                {
+                    question: "How much does this cost?",
+                    answer: "Every system is different. After a free assessment, we'll provide a detailed quote with options. We work with budgets from small homes to large commercial facilities."
+                },
+                {
+                    question: "Can I see examples of your work?",
+                    answer: "We're early-stage, so our portfolio is still growing. But our team's experience speaks for itself. We're happy to share technical details, explain how our systems work, or connect you with ABB and Bitzer for technical validation."
+                },
+                {
+                    question: "How do you avoid wasting my time?",
+                    answer: "We're selective about projects. We only take on work we're confident we can do well. If your project isn't right for us, we'll tell you honestly."
+                }
+            ];
+
+            return (
+                <section className="about" id="faq">
+                    <div className="container">
+                        <h2 className="section-title">FREQUENTLY ASKED QUESTIONS</h2>
+                        <div className="faq-grid">
+                            {faqs.map((faq, index) => (
+                                <div className="faq-item" key={index}>
+                                    <h4 className="faq-question">{faq.question}</h4>
+                                    <p className="faq-answer">{faq.answer}</p>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </section>
@@ -722,13 +878,26 @@
                     <div className="container">
                         <h2 className="section-title">CONTACT</h2>
                         <p className="section-subtitle">
-                            Ready to optimize your energy system? Let's talk.
+                            Ready to cut your energy costs? Let's talk.
                         </p>
+
+                        <div className="hero-buttons" style={{justifyContent: 'center', marginBottom: '60px'}}>
+                            <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
+                            <a className="cta-button" onClick={() => document.getElementById('projects') && window.scrollTo(0,0)}>Learn About Bitzer Retrofits</a>
+                            <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
+                        </div>
+
                         <div className="contact-info">
                             <div className="contact-item">
-                                <div className="contact-label">General Enquiries</div>
+                                <div className="contact-label">Email</div>
                                 <div className="contact-value">
                                     <a href="mailto:admin@solarstitch.co.za">admin@solarstitch.co.za</a>
+                                </div>
+                            </div>
+                            <div className="contact-item">
+                                <div className="contact-label">Response Time</div>
+                                <div className="contact-value">
+                                    <span style={{color: 'var(--black)', letterSpacing: '1px'}}>Within 24 hours (usually much faster)</span>
                                 </div>
                             </div>
                         </div>
@@ -739,61 +908,51 @@
 
         /* ===== SERVICES PAGE ===== */
         function ServicesPage({ navigateTo }) {
-            const services = [
+            const serviceCategories = [
                 {
-                    number: "01",
-                    title: "Remote Monitoring",
-                    description: "24/7 system surveillance. Real-time performance tracking. Proactive fault detection. Automated alerts. Monthly performance reports delivered to your inbox."
+                    category: "ENERGY MONITORING & AUDIT",
+                    services: [
+                        { title: "Remote Monitoring (24/7)", description: "Real-time system surveillance. Proactive fault detection. Automated alerts. Performance tracking around the clock." },
+                        { title: "System Health Checks", description: "Comprehensive diagnostics across every component. Thermal imaging. Connection integrity testing. Inverter analysis." },
+                        { title: "Energy Audits & Site Assessments", description: "Complete energy analysis. Load profile mapping. Identify waste. Detailed reporting with recommendations." },
+                        { title: "Monthly Performance Reports", description: "Branded reports with usage data, sustainability metrics, and efficiency insights delivered to your inbox." }
+                    ]
                 },
                 {
-                    number: "02",
-                    title: "Panel Cleaning",
-                    description: "Professional cleaning to restore optimal output. Dust, bird droppings, and debris removal. Before/after performance comparison. Scheduled maintenance plans."
+                    category: "COOLING & AIR CON OPTIMIZATION",
+                    services: [
+                        { title: "Bitzer VSD Compressor Retrofits", description: "Our specialty. Replace traditional compressors with efficient VSD-controlled systems for solar compatibility." },
+                        { title: "Cooling System Efficiency Analysis", description: "Assess your refrigeration and air conditioning units. Identify inefficiencies. Design optimization solutions." },
+                        { title: "Refrigerant System Troubleshooting", description: "Diagnose and repair cooling system issues. Temperature problems. Efficiency optimization. All commercial systems." }
+                    ]
                 },
                 {
-                    number: "03",
-                    title: "System Health Checks",
-                    description: "Comprehensive diagnostics across every component. Thermal imaging. Connection integrity testing. Inverter analysis. Detailed reporting with recommendations."
+                    category: "SOLAR INSTALLATION & SETUP",
+                    services: [
+                        { title: "Solar System Design & Installation", description: "Complete grid-tied, off-grid, and hybrid solar systems. Site assessment to commissioning." },
+                        { title: "Battery Integration & Setup", description: "Lithium and lead-acid battery systems. Proper sizing, installation, and configuration." },
+                        { title: "Panel Installation & Commissioning", description: "Professional mounting. Electrical work. Optimiser setup. Full system commissioning." },
+                        { title: "Remote Monitoring Portal Setup", description: "VRM portal access. Cloud connectivity. API integrations. Real-time visibility." }
+                    ]
                 },
                 {
-                    number: "04",
-                    title: "Inverter Repairs",
-                    description: "Fault diagnosis and repair. Component replacement. Firmware troubleshooting. All major brands supported. Emergency callout available."
+                    category: "MAINTENANCE & REPAIRS",
+                    services: [
+                        { title: "Inverter Repairs & Diagnostics", description: "Fault diagnosis. Component replacement. Firmware troubleshooting. All major brands supported." },
+                        { title: "Battery Maintenance & Testing", description: "State of health checks. Cell balancing. Terminal cleaning. Capacity testing." },
+                        { title: "Panel Cleaning & Thermal Imaging", description: "Professional cleaning. Dust and debris removal. Thermal imaging inspections. Performance comparison." },
+                        { title: "Electrical Repairs & Surge Protection", description: "DC and AC wiring issues. Isolator replacements. Surge protection. Earth fault resolution. COC compliance." },
+                        { title: "Firmware Updates & System Optimization", description: "Remote and on-site updates. Battery BMS updates. Performance tuning. Load setting adjustments." },
+                        { title: "Communications & Connectivity Fixes", description: "WiFi and cellular gateway issues. Data logger repairs. Cloud connectivity troubleshooting." }
+                    ]
                 },
                 {
-                    number: "05",
-                    title: "Battery Maintenance",
-                    description: "State of health checks. Cell balancing. Terminal cleaning. Capacity testing. Lithium and lead-acid systems supported."
-                },
-                {
-                    number: "06",
-                    title: "Comms & Connectivity",
-                    description: "WiFi and cellular gateway issues. Monitoring portal setup. Data logger repairs. API integrations. Cloud connectivity troubleshooting."
-                },
-                {
-                    number: "07",
-                    title: "Electrical Repairs",
-                    description: "DC and AC wiring issues. Isolator replacements. Surge protection. Earth fault resolution. COC compliance checks."
-                },
-                {
-                    number: "08",
-                    title: "Firmware Updates",
-                    description: "Remote and on-site inverter updates. Battery BMS updates. Optimiser firmware. Performance tuning. Load setting adjustments."
-                },
-                {
-                    number: "09",
-                    title: "Emergency Callouts",
-                    description: "2-4 hour response for critical failures. After-hours support. Fault isolation. Temporary solutions to keep you running. Priority for maintenance plan members."
-                },
-                {
-                    number: "10",
-                    title: "Residential Services",
-                    description: "Complete solar solutions for homes. System design and installation. Load analysis and sizing. Battery backup systems. Geyser optimization. Prepaid meter integration. Monthly monitoring packages available."
-                },
-                {
-                    number: "11",
-                    title: "Ad-hoc Services",
-                    description: "One-off services and custom projects. Energy audits and site assessments. Load profile analysis. System upgrades and expansions. Component replacements. Consultation and feasibility studies. Quoted per project."
+                    category: "EMERGENCY & ONGOING SUPPORT",
+                    services: [
+                        { title: "24/7 Emergency Response", description: "2-4 hour response for critical failures. After-hours support. Fault isolation. Keep your systems running." },
+                        { title: "Monthly Maintenance Plans", description: "Scheduled preventative maintenance. Priority support. Regular inspections. Peace of mind." },
+                        { title: "Ad-hoc Services & Custom Projects", description: "One-off troubleshooting. System upgrades and expansions. Consultation and feasibility studies. Quoted per project." }
+                    ]
                 }
             ];
 
@@ -802,81 +961,79 @@
                     <div className="page-header">
                         <h1 className="section-title">SERVICES</h1>
                         <p className="section-subtitle">
-                            Comprehensive maintenance and support to keep your solar system performing at its best
+                            Comprehensive energy solutions—from monitoring and optimization to installation and emergency support
                         </p>
                     </div>
-                    
-                    <section className="services-section">
-                        <div className="container">
-                            <div className="services-grid">
-                                {services.map((service, index) => (
-                                    <div className="service-card" key={index}>
-                                        <div className="service-number">{service.number}</div>
-                                        <h3 className="service-title">{service.title}</h3>
-                                        <p className="service-desc">{service.description}</p>
-                                    </div>
-                                ))}
+
+                    {serviceCategories.map((cat, catIndex) => (
+                        <section className="services-section" key={catIndex} style={{paddingTop: catIndex === 0 ? '120px' : '60px', paddingBottom: '60px', background: catIndex % 2 === 0 ? 'var(--white)' : 'var(--off-white)'}}>
+                            <div className="container">
+                                <h3 className="section-title" style={{fontSize: '1.3em', marginBottom: '50px'}}>{cat.category}</h3>
+                                <div className="services-grid">
+                                    {cat.services.map((service, index) => (
+                                        <div className="service-card" key={index} style={{background: catIndex % 2 === 0 ? 'var(--white)' : 'var(--off-white)'}}>
+                                            <h3 className="service-title">{service.title}</h3>
+                                            <p className="service-desc">{service.description}</p>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    </section>
+                        </section>
+                    ))}
 
                     <div className="cta-banner">
-                        <p>Need ongoing maintenance and monitoring? Get in touch for a consultation.</p>
-                        <a className="cta-button" onClick={() => navigateTo('home')}>Contact Us</a>
+                        <p>Need help with your energy system? Get in touch for a free consultation.</p>
+                        <div className="hero-buttons" style={{justifyContent: 'center', marginTop: '20px'}}>
+                            <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
+                            <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
+                        </div>
                     </div>
                 </div>
             );
         }
 
-        /* ===== PROJECTS PAGE ===== */
+        /* ===== WHAT WE DO PAGE (formerly Projects) ===== */
         function ProjectsPage({ navigateTo }) {
             return (
                 <div>
                     <div className="page-header">
-                        <h1 className="section-title">PROJECTS</h1>
+                        <h1 className="section-title">WHAT WE DO</h1>
                         <p className="section-subtitle">
-                            New installations, system upgrades, and specialized energy solutions
+                            SPECIALIZED: Bitzer VSD Compressor Retrofits<br />
+                            CORE SERVICES: Solar Installation | System Optimization | Maintenance & Monitoring
                         </p>
                     </div>
-                    
+
                     <section className="projects-section">
                         <div className="container">
                             <div className="projects-grid">
-                                
+
                                 {/* Featured: Bitzer Compressor Retrofit */}
                                 <div className="project-card featured">
                                     <div>
-                                        <div className="project-number">SPECIALTY RETROFIT</div>
+                                        <div className="project-number">OUR SPECIALTY</div>
                                         <h3 className="project-title"><a href="https://www.bitzer.de/za/en/" target="_blank" rel="noopener noreferrer" style={{color: 'inherit', textDecoration: 'none'}}>BITZER</a> VSD COMPRESSOR RETROFITS</h3>
                                         <p className="project-desc">
-                                            The Problem: Traditional refrigeration compressors draw 6-8× their running current during startup—creating
-                                            massive inrush that requires oversized inverters, making solar integration expensive or impossible.
+                                            <strong>The Problem:</strong> Your traditional refrigeration compressor (in that freezer or air con unit) draws 6-8× its normal current when it starts up. This "inrush current" is a killer for solar systems—it requires an oversized, expensive inverter just to handle the startup.
                                         </p>
                                         <p className="project-desc">
-                                            The Solution: We retrofit your existing cooling system with <a href="https://www.bitzer.de/za/en/" target="_blank" rel="noopener noreferrer" style={{color: 'inherit', textDecoration: 'underline'}}>Bitzer</a> compressors controlled by ABB Variable
-                                            Speed Drives (VSDs). The VSD provides soft-start capability, ramping up smoothly with only 2-3× running current.
-                                            This eliminates the inrush problem entirely.
+                                            <strong>The Solution:</strong> We retrofit your existing compressor with <a href="https://www.bitzer.de/za/en/" target="_blank" rel="noopener noreferrer" style={{color: 'inherit', textDecoration: 'underline'}}>Bitzer</a> equipment and ABB Variable Speed Drives. The VSD provides a smooth, intelligent ramp-up—using only 2-3× running current instead of 6-8×. No massive startup surge.
                                         </p>
                                         <p className="project-desc">
-                                            <strong>The Result:</strong> Your refrigeration system becomes solar-friendly. Instead of needing a 30kW inverter
-                                            to handle startup surge, a 12kW system can run the same cooling load. You save on inverter costs, reduce battery
-                                            requirements, and gain 20-40% energy efficiency from VSD speed modulation.
-                                        </p>
-                                        <p className="project-desc">
-                                            Perfect for supermarkets, cold rooms, butcheries, restaurants, and any commercial refrigeration running on
-                                            solar, generators, or backup power.
-                                        </p>
-                                        <p className="project-desc">
-                                            <strong>Note:</strong> Each <a href="https://www.bitzer.de/za/en/" target="_blank" rel="noopener noreferrer" style={{color: 'inherit', textDecoration: 'underline'}}>Bitzer</a> VSD compressor retrofit is quoted per site due to the unique nature of each refrigeration solution.
+                                            <strong>The Result:</strong>
                                         </p>
                                         <ul className="project-features">
-                                            <li>ABB Variable Speed Drive control integration</li>
-                                            <li>Soft startup eliminates 6-8× inrush current problem</li>
-                                            <li>Reduce inverter size requirements by up to 60%</li>
-                                            <li>Speed modulation provides 20-40% energy savings</li>
-                                            <li>Peak demand shaving and grid cost reduction</li>
-                                            <li>Full system design, installation & commissioning</li>
+                                            <li>Your freezer or air con now runs efficiently on solar</li>
+                                            <li>You need a smaller, cheaper inverter</li>
+                                            <li>The VSD modulates speed, cutting energy use by 20-40%</li>
+                                            <li>You save money from day one</li>
                                         </ul>
+                                        <p className="project-desc" style={{marginTop: '20px'}}>
+                                            <strong>Who benefits?</strong> Strip malls with multiple freezers. Supermarkets. Restaurants with walk-in coolers. Cold storage facilities. Butcheries. Office buildings with large air con loads. Homes with solar and air conditioning.
+                                        </p>
+                                        <p className="project-desc" style={{marginTop: '15px', fontStyle: 'italic'}}>
+                                            Every retrofit is custom-designed for your specific system. Get in touch for a consultation.
+                                        </p>
                                     </div>
                                     <div className="featured-visual">
                                         <div className="visual-box">
@@ -897,69 +1054,80 @@
                                     </div>
                                 </div>
 
-                                {/* New Solar Installations */}
+                                {/* Core Service 1: Solar Installation */}
                                 <div className="project-card">
-                                    <div className="project-number">CORE SERVICE 01</div>
-                                    <h3 className="project-title">SOLAR INSTALLATIONS</h3>
+                                    <div className="project-number">CORE SERVICE 1</div>
+                                    <h3 className="project-title">SOLAR INSTALLATION</h3>
                                     <p className="project-desc">
-                                        Professional solar installations from concept to commissioning. We design and build complete
-                                        grid-tied, off-grid, and hybrid solar systems using premium Victron and SolarMD components.
+                                        From concept to commissioning, we design and install complete solar systems—grid-tied, off-grid, or hybrid. We use proven equipment (Victron, SolarMD) and configure everything to actually work with your real-world energy use.
                                     </p>
                                     <p className="project-desc">
-                                        Every installation includes detailed site assessment, custom system design, professional
-                                        mounting and electrical work, inverter configuration, battery integration, and full
-                                        commissioning with remote monitoring setup.
+                                        We handle professional mounting, electrical work, inverter setup, battery integration, and full commissioning. Everything gets monitored and optimized.
                                     </p>
                                     <ul className="project-features">
-                                        <li>Victron & SolarMD inverter systems</li>
-                                        <li>Grid-tied, off-grid & hybrid configurations</li>
-                                        <li>Residential, commercial & industrial scale</li>
-                                        <li>Battery storage integration (Lithium & Lead-acid)</li>
-                                        <li>Professional engineering design & load calculations</li>
-                                        <li>Municipal applications & Certificate of Compliance</li>
-                                        <li>Advanced metering & energy analytics via Phy Engineering</li>
-                                        <li>Remote monitoring & VRM portal setup</li>
-                                        <li>Comprehensive warranty & after-sales support</li>
+                                        <li>Site assessment & load analysis</li>
+                                        <li>Custom system design</li>
+                                        <li>Professional installation</li>
+                                        <li>Battery integration (lithium & lead-acid)</li>
+                                        <li>Metering & energy analytics via Phy Engineering</li>
+                                        <li>Remote monitoring setup</li>
+                                        <li>Warranty & ongoing support</li>
                                     </ul>
                                 </div>
 
-                                {/* Solar Maintenance & Repair */}
+                                {/* Core Service 2: Energy Optimization & Metering */}
                                 <div className="project-card">
-                                    <div className="project-number">CORE SERVICE 02</div>
-                                    <h3 className="project-title">SOLAR MAINTENANCE & REPAIR</h3>
+                                    <div className="project-number">CORE SERVICE 2</div>
+                                    <h3 className="project-title">ENERGY OPTIMIZATION & METERING</h3>
                                     <p className="project-desc">
-                                        Comprehensive maintenance and repair services to keep your solar system performing at peak efficiency.
-                                        From preventative maintenance to emergency repairs, we service all major brands and system types.
+                                        We measure your energy use, identify waste, and fix it. Our advanced metering tells you exactly where your money is going—then we design solutions to cut it.
                                     </p>
                                     <p className="project-desc">
-                                        Our maintenance includes 24/7 remote monitoring, scheduled site visits, performance optimization,
-                                        firmware updates, and rapid response for system failures. We diagnose and repair inverters,
-                                        batteries, panels, communications, and all electrical components.
+                                        This might mean upgrading your cooling system, retrofitting your compressor, adjusting your load profile, or optimizing your solar setup.
                                     </p>
                                     <ul className="project-features">
                                         <li>24/7 remote monitoring & performance tracking</li>
-                                        <li>Phy Engineering metering: automated meter reading & energy analytics</li>
-                                        <li>Energy audits highlighting inefficiencies & savings opportunities</li>
-                                        <li>Monthly branded reports with usage data & sustainability metrics</li>
-                                        <li>Scheduled maintenance plans (see Pricing)</li>
-                                        <li>Emergency callout service (2-4 hour response)</li>
-                                        <li>Inverter diagnostics, repair & replacement</li>
-                                        <li>Battery health checks & capacity testing</li>
-                                        <li>Panel cleaning & thermal imaging inspections</li>
-                                        <li>Communications troubleshooting & portal access</li>
-                                        <li>Firmware updates & system optimization</li>
-                                        <li>All major brands: Victron, SolarMD, SunSynk, Deye & more</li>
+                                        <li>Advanced metering & energy analytics</li>
+                                        <li>Load profile analysis</li>
+                                        <li>System diagnostics & efficiency audits</li>
+                                        <li>Performance optimization & firmware updates</li>
+                                        <li>Emergency support (2-4 hour response)</li>
                                     </ul>
                                 </div>
 
+                                {/* Core Service 3: System Maintenance & Repair */}
+                                <div className="project-card" style={{gridColumn: 'span 2'}}>
+                                    <div className="project-number">CORE SERVICE 3</div>
+                                    <h3 className="project-title">SYSTEM MAINTENANCE & REPAIR</h3>
+                                    <p className="project-desc">
+                                        We keep your solar, cooling, and energy systems running smoothly. Preventative maintenance, emergency repairs, or one-off troubleshooting—we've got you covered.
+                                    </p>
+                                    <div style={{display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginTop: '20px'}}>
+                                        <ul className="project-features">
+                                            <li>Inverter diagnostics & repair</li>
+                                            <li>Battery health checks</li>
+                                            <li>Panel cleaning & thermal imaging</li>
+                                            <li>Cooling system troubleshooting</li>
+                                        </ul>
+                                        <ul className="project-features">
+                                            <li>Electrical repairs & surge protection</li>
+                                            <li>Communications & monitoring setup</li>
+                                            <li>Firmware updates</li>
+                                            <li>All major brands supported</li>
+                                        </ul>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
                     </section>
 
                     <div className="cta-banner">
-                        <p>Ready to transform your energy or refrigeration system? Get in touch for a consultation.</p>
-                        <a className="cta-button" onClick={() => navigateTo('home')}>Contact Edmund</a>
+                        <p>Ready to cut your energy costs? Get in touch for a free consultation.</p>
+                        <div className="hero-buttons" style={{justifyContent: 'center', marginTop: '20px'}}>
+                            <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
+                            <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
+                        </div>
                     </div>
                 </div>
             );
