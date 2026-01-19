@@ -104,6 +104,80 @@
             color: var(--black);
         }
 
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 28px;
+            height: 20px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            height: 2px;
+            width: 100%;
+            background: var(--black);
+            transition: all 0.3s;
+        }
+
+        .mobile-menu-toggle.open span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .mobile-menu-toggle.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--white);
+            z-index: 999;
+            padding-top: 100px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .mobile-nav-overlay.open {
+            display: flex;
+        }
+
+        .mobile-nav-overlay ul {
+            list-style: none;
+            text-align: center;
+        }
+
+        .mobile-nav-overlay li {
+            margin: 25px 0;
+        }
+
+        .mobile-nav-overlay a {
+            font-size: 1.2em;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--mid-gray);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .mobile-nav-overlay a:hover,
+        .mobile-nav-overlay a.active {
+            color: var(--black);
+        }
+
         /* Hero Section */
         .hero {
             min-height: 100vh;
@@ -724,6 +798,10 @@
                 display: none;
             }
 
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
             .hero {
                 padding: 120px 30px 80px;
             }
@@ -795,21 +873,63 @@
         }
 
         function Navigation({ currentPage, navigateTo }) {
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+            const handleNavigate = (page) => {
+                navigateTo(page);
+                setMobileMenuOpen(false);
+            };
+
+            const navItems = [
+                { page: 'home', label: 'Home' },
+                { page: 'services', label: 'Services' },
+                { page: 'projects', label: 'What We Do' },
+                { page: 'example', label: 'Example Analysis' },
+                { page: 'calculator', label: 'Calculator' },
+                { page: 'home', label: 'Contact', isContact: true }
+            ];
+
             return (
                 <nav>
                     <div className="nav-content">
-                        <a className="nav-logo-text" onClick={() => navigateTo('home')}>
+                        <a className="nav-logo-text" onClick={() => handleNavigate('home')}>
                             <span className="nav-logo-solar">SOLAR</span>
                             <span className="nav-logo-divider"></span>
                             <span className="nav-logo-stitch">STITCH</span>
                         </a>
                         <ul className="nav-links">
-                            <li><a onClick={() => navigateTo('home')} className={currentPage === 'home' ? 'active' : ''}>Home</a></li>
-                            <li><a onClick={() => navigateTo('services')} className={currentPage === 'services' ? 'active' : ''}>Services</a></li>
-                            <li><a onClick={() => navigateTo('projects')} className={currentPage === 'projects' ? 'active' : ''}>What We Do</a></li>
-                            <li><a onClick={() => navigateTo('example')} className={currentPage === 'example' ? 'active' : ''}>Example Analysis</a></li>
-                            <li><a onClick={() => navigateTo('calculator')} className={currentPage === 'calculator' ? 'active' : ''}>Calculator</a></li>
-                            <li><a onClick={() => navigateTo('home')} className="">Contact</a></li>
+                            {navItems.map((item, i) => (
+                                <li key={i}>
+                                    <a
+                                        onClick={() => handleNavigate(item.page)}
+                                        className={!item.isContact && currentPage === item.page ? 'active' : ''}
+                                    >
+                                        {item.label}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                        <div
+                            className={`mobile-menu-toggle ${mobileMenuOpen ? 'open' : ''}`}
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        >
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                    <div className={`mobile-nav-overlay ${mobileMenuOpen ? 'open' : ''}`}>
+                        <ul>
+                            {navItems.map((item, i) => (
+                                <li key={i}>
+                                    <a
+                                        onClick={() => handleNavigate(item.page)}
+                                        className={!item.isContact && currentPage === item.page ? 'active' : ''}
+                                    >
+                                        {item.label}
+                                    </a>
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 </nav>
