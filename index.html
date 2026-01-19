@@ -1753,6 +1753,7 @@
 
         function CalculatorPage({ navigateTo }) {
             const { useState, useMemo } = React;
+            const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } = Recharts;
 
             // Input state
             const [clientType, setClientType] = useState('residential');
@@ -1760,6 +1761,9 @@
             const [monthlyBill, setMonthlyBill] = useState('');
             const [includeBattery, setIncludeBattery] = useState(false);
             const [backupHours, setBackupHours] = useState(8);
+            const [hasGenerator, setHasGenerator] = useState(false);
+            const [generatorHours, setGeneratorHours] = useState(20);
+            const [peakDemandKva, setPeakDemandKva] = useState('');
 
             // Client type configurations
             const clientConfig = {
@@ -1768,21 +1772,27 @@
                     solarMatchFactor: 1.0,
                     operatingHours: 16,
                     placeholder: 'e.g. 800',
-                    description: 'Homes typically use 500-1500 kWh/month'
+                    description: 'Homes typically use 500-1500 kWh/month',
+                    avgRate: 2.50,
+                    demandCharge: 0
                 },
                 smallCommercial: {
                     label: 'Small Commercial',
                     solarMatchFactor: 0.9,
                     operatingHours: 10,
                     placeholder: 'e.g. 5000',
-                    description: 'Small businesses typically use 2000-10000 kWh/month'
+                    description: 'Small businesses typically use 2000-10000 kWh/month',
+                    avgRate: 2.80,
+                    demandCharge: 150
                 },
                 largeCommercial: {
                     label: 'Large Commercial',
                     solarMatchFactor: 0.85,
                     operatingHours: 16,
                     placeholder: 'e.g. 25000',
-                    description: 'Industrial facilities typically use 10000-50000+ kWh/month'
+                    description: 'Industrial facilities typically use 10000-50000+ kWh/month',
+                    avgRate: 2.60,
+                    demandCharge: 180
                 }
             };
 
@@ -1790,9 +1800,16 @@
             const PEAK_SUN_HOURS = 4.5;
             const SYSTEM_LOSSES = 0.80;
             const PANEL_WATTAGE = 550;
+            const PANEL_AREA = 2.2; // m² per panel
             const CO2_PER_KWH = 0.9;
             const TREES_PER_TON_CO2 = 16.5;
             const DOD_BUFFER = 1.2;
+            const ESKOM_ESCALATION = 0.12; // 12% annual increase
+            const COST_PER_KWP = 14000; // R14,000 per kWp installed (estimate)
+            const BATTERY_COST_PER_KWH = 12000; // R12,000 per kWh
+            const DIESEL_PRICE = 24; // R/litre
+            const DIESEL_CONSUMPTION = 0.3; // litres per kWh generated
+            const DIESEL_CO2_PER_LITRE = 2.68; // kg CO2 per litre
 
             // Calculate results
             const results = useMemo(() => {
@@ -1800,6 +1817,8 @@
                 if (kwh <= 0) return null;
 
                 const config = clientConfig[clientType];
+                const bill = parseFloat(monthlyBill) || kwh * config.avgRate;
+                const effectiveRate = bill / kwh;
 
                 // Solar sizing
                 const dailyUsage = kwh / 30;
@@ -1807,19 +1826,94 @@
                 const panelCount = Math.ceil((requiredKwp * 1000) / PANEL_WATTAGE);
                 const actualKwp = (panelCount * PANEL_WATTAGE) / 1000;
                 const annualProduction = actualKwp * PEAK_SUN_HOURS * 365 * SYSTEM_LOSSES;
+                const monthlySolarProduction = annualProduction / 12;
+
+                // Roof space required
+                const roofSpaceM2 = Math.ceil(panelCount * PANEL_AREA);
 
                 // Battery sizing
                 const hourlyLoad = dailyUsage / config.operatingHours;
                 const batteryKwh = includeBattery ? Math.ceil(hourlyLoad * backupHours * DOD_BUFFER) : 0;
 
+                // System cost estimate
+                const solarCost = actualKwp * COST_PER_KWP;
+                const batteryCost = batteryKwh * BATTERY_COST_PER_KWH;
+                const totalSystemCost = solarCost + batteryCost;
+
+                // Monthly savings
+                const solarUsed = Math.min(monthlySolarProduction, kwh);
+                const monthlySavings = solarUsed * effectiveRate;
+                const annualSavings = monthlySavings * 12;
+
+                // Payback period (with escalation considered)
+                let cumulativeSavings = 0;
+                let paybackYears = 0;
+                let currentAnnualSavings = annualSavings;
+                for (let year = 1; year <= 25; year++) {
+                    cumulativeSavings += currentAnnualSavings;
+                    if (cumulativeSavings >= totalSystemCost && paybackYears === 0) {
+                        paybackYears = year;
+                    }
+                    currentAnnualSavings *= (1 + ESKOM_ESCALATION);
+                }
+                if (paybackYears === 0) paybackYears = 25;
+
+                // 10-year cost comparison
+                const tenYearData = [];
+                let gridOnlyCumulative = 0;
+                let solarCumulative = totalSystemCost;
+                let currentGridCost = bill * 12;
+                let currentSolarGridCost = (kwh - solarUsed) * effectiveRate * 12;
+
+                for (let year = 0; year <= 10; year++) {
+                    if (year === 0) {
+                        tenYearData.push({
+                            year: 'Now',
+                            gridOnly: 0,
+                            withSolar: totalSystemCost,
+                            savings: -totalSystemCost
+                        });
+                    } else {
+                        gridOnlyCumulative += currentGridCost;
+                        solarCumulative += currentSolarGridCost;
+                        tenYearData.push({
+                            year: `Year ${year}`,
+                            gridOnly: Math.round(gridOnlyCumulative),
+                            withSolar: Math.round(solarCumulative),
+                            savings: Math.round(gridOnlyCumulative - solarCumulative)
+                        });
+                        currentGridCost *= (1 + ESKOM_ESCALATION);
+                        currentSolarGridCost *= (1 + ESKOM_ESCALATION);
+                    }
+                }
+
+                // Peak demand reduction (for commercial)
+                const peakKva = parseFloat(peakDemandKva) || 0;
+                const demandReductionKva = peakKva > 0 ? Math.min(actualKwp * 0.8, peakKva * 0.3) : 0;
+                const demandSavingsMonthly = demandReductionKva * config.demandCharge;
+
+                // Generator replacement savings
+                let generatorSavings = null;
+                if (hasGenerator && generatorHours > 0) {
+                    const monthlyGenHours = generatorHours;
+                    const avgGenLoad = dailyUsage / config.operatingHours;
+                    const monthlyGenKwh = avgGenLoad * monthlyGenHours;
+                    const monthlyDieselLitres = monthlyGenKwh * DIESEL_CONSUMPTION;
+                    const monthlyDieselCost = monthlyDieselLitres * DIESEL_PRICE;
+                    const monthlyDieselCO2 = (monthlyDieselLitres * DIESEL_CO2_PER_LITRE) / 1000;
+                    generatorSavings = {
+                        litresPerMonth: Math.round(monthlyDieselLitres),
+                        costPerMonth: Math.round(monthlyDieselCost),
+                        co2PerYear: (monthlyDieselCO2 * 12).toFixed(1)
+                    };
+                }
+
                 // Environmental impact
                 const co2OffsetTons = (annualProduction * CO2_PER_KWH) / 1000;
                 const treesEquivalent = Math.round(co2OffsetTons * TREES_PER_TON_CO2);
 
-                // Bill coverage estimate (assuming average R2.50/kWh)
-                const avgRate = 2.50;
-                const estimatedBill = monthlyBill ? parseFloat(monthlyBill) : kwh * avgRate;
-                const solarCoveragePercent = Math.min(100, Math.round((annualProduction / 12 / kwh) * 100));
+                // Solar coverage
+                const solarCoveragePercent = Math.min(100, Math.round((monthlySolarProduction / kwh) * 100));
 
                 return {
                     systemKwp: actualKwp.toFixed(1),
@@ -1829,9 +1923,26 @@
                     co2OffsetTons: co2OffsetTons.toFixed(1),
                     treesEquivalent,
                     solarCoveragePercent,
-                    dailyUsage: dailyUsage.toFixed(1)
+                    dailyUsage: dailyUsage.toFixed(1),
+                    roofSpaceM2,
+                    paybackYears,
+                    totalSystemCost,
+                    tenYearData,
+                    tenYearSavings: tenYearData[10]?.savings || 0,
+                    demandReductionKva: demandReductionKva.toFixed(1),
+                    demandSavingsMonthly: Math.round(demandSavingsMonthly),
+                    generatorSavings,
+                    monthlySavings: Math.round(monthlySavings)
                 };
-            }, [monthlyKwh, clientType, includeBattery, backupHours, monthlyBill]);
+            }, [monthlyKwh, clientType, includeBattery, backupHours, monthlyBill, hasGenerator, generatorHours, peakDemandKva]);
+
+            // Chart colors
+            const chartColors = {
+                gridOnly: '#dc2626',
+                withSolar: '#16a34a',
+                text: '#666666',
+                grid: '#e5e5e5'
+            };
 
             return (
                 <div>
@@ -1928,6 +2039,53 @@
                                     </p>
                                 </div>
                             )}
+
+                            {/* Generator Replacement Option */}
+                            <div className="calculator-input-group">
+                                <label className="calculator-checkbox">
+                                    <input
+                                        type="checkbox"
+                                        checked={hasGenerator}
+                                        onChange={(e) => setHasGenerator(e.target.checked)}
+                                    />
+                                    <span>I currently use a diesel generator for backup</span>
+                                </label>
+                            </div>
+
+                            {hasGenerator && (
+                                <div className="calculator-input-group" style={{marginLeft: '32px'}}>
+                                    <label>How many hours per month do you run the generator?</label>
+                                    <input
+                                        type="number"
+                                        className="calculator-input"
+                                        placeholder="e.g. 20"
+                                        value={generatorHours}
+                                        onChange={(e) => setGeneratorHours(parseFloat(e.target.value) || 0)}
+                                        min="0"
+                                    />
+                                    <p style={{fontSize: '0.85em', color: 'var(--mid-gray)', marginTop: '8px', fontWeight: '300'}}>
+                                        Typical load shedding: 20-60 hours/month
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Peak Demand (Commercial only) */}
+                            {clientType !== 'residential' && (
+                                <div className="calculator-input-group">
+                                    <label>Peak demand in kVA (optional - for demand charge savings)</label>
+                                    <input
+                                        type="number"
+                                        className="calculator-input"
+                                        placeholder="e.g. 100"
+                                        value={peakDemandKva}
+                                        onChange={(e) => setPeakDemandKva(e.target.value)}
+                                        min="0"
+                                    />
+                                    <p style={{fontSize: '0.85em', color: 'var(--mid-gray)', marginTop: '8px', fontWeight: '300'}}>
+                                        Found on your electricity bill - helps calculate demand charge savings
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </section>
 
@@ -1939,6 +2097,7 @@
                                     YOUR ESTIMATED SYSTEM
                                 </h2>
 
+                                {/* Primary Results */}
                                 <div className="calculator-results">
                                     {/* System Size Card */}
                                     <div className="calculator-result-card">
@@ -1950,13 +2109,23 @@
                                         </div>
                                     </div>
 
-                                    {/* Annual Production Card */}
+                                    {/* Roof Space Card */}
                                     <div className="calculator-result-card">
-                                        <div className="calculator-result-label">Annual Production</div>
-                                        <div className="calculator-result-value">{(results.annualProduction / 1000).toFixed(1)}</div>
-                                        <div className="calculator-result-unit">MWh / year</div>
+                                        <div className="calculator-result-label">Roof Space Required</div>
+                                        <div className="calculator-result-value">{results.roofSpaceM2}</div>
+                                        <div className="calculator-result-unit">m²</div>
                                         <div className="calculator-result-detail">
-                                            ~{Math.round(results.annualProduction / 12)} kWh per month
+                                            ~{Math.round(results.roofSpaceM2 / 10)} parking bays equivalent
+                                        </div>
+                                    </div>
+
+                                    {/* Payback Period Card */}
+                                    <div className="calculator-result-card" style={{borderColor: 'var(--black)'}}>
+                                        <div className="calculator-result-label">Estimated Payback</div>
+                                        <div className="calculator-result-value">{results.paybackYears}</div>
+                                        <div className="calculator-result-unit">years</div>
+                                        <div className="calculator-result-detail">
+                                            With 12% annual Eskom increases
                                         </div>
                                     </div>
 
@@ -1974,11 +2143,11 @@
 
                                     {/* Solar Coverage Card */}
                                     <div className="calculator-result-card">
-                                        <div className="calculator-result-label">Estimated Solar Coverage</div>
+                                        <div className="calculator-result-label">Solar Coverage</div>
                                         <div className="calculator-result-value">{results.solarCoveragePercent}</div>
                                         <div className="calculator-result-unit">% of usage</div>
                                         <div className="calculator-result-detail">
-                                            During daylight hours
+                                            Saves ~R{results.monthlySavings.toLocaleString()}/month
                                         </div>
                                     </div>
 
@@ -1988,13 +2157,171 @@
                                         <div className="calculator-result-value">{results.co2OffsetTons}</div>
                                         <div className="calculator-result-unit">tons</div>
                                         <div className="calculator-result-detail">
-                                            Equivalent to {results.treesEquivalent} trees planted
+                                            = {results.treesEquivalent} trees planted
                                         </div>
                                     </div>
                                 </div>
 
+                                {/* 10-Year Cost Comparison Chart */}
                                 <div style={{
                                     marginTop: '60px',
+                                    padding: '40px',
+                                    background: 'var(--white)',
+                                    border: '1px solid var(--lighter-gray)'
+                                }}>
+                                    <h3 style={{
+                                        fontSize: '0.75em',
+                                        letterSpacing: '3px',
+                                        textTransform: 'uppercase',
+                                        color: 'var(--mid-gray)',
+                                        marginBottom: '30px',
+                                        textAlign: 'center'
+                                    }}>
+                                        10-Year Cost Comparison
+                                    </h3>
+                                    <ResponsiveContainer width="100%" height={350}>
+                                        <AreaChart data={results.tenYearData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} />
+                                            <XAxis dataKey="year" stroke={chartColors.text} tick={{ fontSize: 11 }} />
+                                            <YAxis
+                                                stroke={chartColors.text}
+                                                tick={{ fontSize: 11 }}
+                                                tickFormatter={(value) => `R${(value / 1000).toFixed(0)}k`}
+                                            />
+                                            <Tooltip
+                                                formatter={(value) => [`R${value.toLocaleString()}`, '']}
+                                                labelStyle={{ fontWeight: 'bold' }}
+                                            />
+                                            <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                                            <Area
+                                                type="monotone"
+                                                dataKey="gridOnly"
+                                                name="Grid Only (Cumulative)"
+                                                stroke={chartColors.gridOnly}
+                                                fill={chartColors.gridOnly}
+                                                fillOpacity={0.2}
+                                                strokeWidth={2}
+                                            />
+                                            <Area
+                                                type="monotone"
+                                                dataKey="withSolar"
+                                                name="With Solar (Cumulative)"
+                                                stroke={chartColors.withSolar}
+                                                fill={chartColors.withSolar}
+                                                fillOpacity={0.2}
+                                                strokeWidth={2}
+                                            />
+                                        </AreaChart>
+                                    </ResponsiveContainer>
+                                    <div style={{
+                                        textAlign: 'center',
+                                        marginTop: '20px',
+                                        padding: '20px',
+                                        background: 'var(--off-white)'
+                                    }}>
+                                        <p style={{fontSize: '1.1em', color: 'var(--dark-gray)', fontWeight: '500'}}>
+                                            10-Year Savings: <span style={{color: '#16a34a'}}>R{results.tenYearSavings.toLocaleString()}</span>
+                                        </p>
+                                        <p style={{fontSize: '0.85em', color: 'var(--mid-gray)', marginTop: '8px'}}>
+                                            Based on current rates with 12% annual Eskom escalation
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Peak Demand Reduction (Commercial) */}
+                                {clientType !== 'residential' && parseFloat(peakDemandKva) > 0 && (
+                                    <div style={{
+                                        marginTop: '40px',
+                                        padding: '40px',
+                                        background: 'var(--off-white)',
+                                        border: '1px solid var(--lighter-gray)'
+                                    }}>
+                                        <h3 style={{
+                                            fontSize: '0.75em',
+                                            letterSpacing: '3px',
+                                            textTransform: 'uppercase',
+                                            color: 'var(--mid-gray)',
+                                            marginBottom: '20px'
+                                        }}>
+                                            Peak Demand Reduction
+                                        </h3>
+                                        <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '30px'}}>
+                                            <div>
+                                                <div style={{fontSize: '2.5em', fontWeight: '300', color: 'var(--black)'}}>
+                                                    {results.demandReductionKva}
+                                                </div>
+                                                <div style={{fontSize: '0.85em', color: 'var(--mid-gray)'}}>
+                                                    kVA reduction during peak solar hours
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div style={{fontSize: '2.5em', fontWeight: '300', color: '#16a34a'}}>
+                                                    R{results.demandSavingsMonthly.toLocaleString()}
+                                                </div>
+                                                <div style={{fontSize: '0.85em', color: 'var(--mid-gray)'}}>
+                                                    monthly demand charge savings
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Generator Replacement Savings */}
+                                {results.generatorSavings && (
+                                    <div style={{
+                                        marginTop: '40px',
+                                        padding: '40px',
+                                        background: 'var(--white)',
+                                        border: '2px solid #16a34a'
+                                    }}>
+                                        <h3 style={{
+                                            fontSize: '0.75em',
+                                            letterSpacing: '3px',
+                                            textTransform: 'uppercase',
+                                            color: '#16a34a',
+                                            marginBottom: '20px'
+                                        }}>
+                                            Generator Replacement Savings
+                                        </h3>
+                                        <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '30px'}}>
+                                            <div>
+                                                <div style={{fontSize: '2.5em', fontWeight: '300', color: 'var(--black)'}}>
+                                                    {results.generatorSavings.litresPerMonth}
+                                                </div>
+                                                <div style={{fontSize: '0.85em', color: 'var(--mid-gray)'}}>
+                                                    litres diesel saved/month
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div style={{fontSize: '2.5em', fontWeight: '300', color: '#16a34a'}}>
+                                                    R{results.generatorSavings.costPerMonth.toLocaleString()}
+                                                </div>
+                                                <div style={{fontSize: '0.85em', color: 'var(--mid-gray)'}}>
+                                                    fuel cost saved/month
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div style={{fontSize: '2.5em', fontWeight: '300', color: 'var(--black)'}}>
+                                                    {results.generatorSavings.co2PerYear}
+                                                </div>
+                                                <div style={{fontSize: '0.85em', color: 'var(--mid-gray)'}}>
+                                                    tons CO₂ avoided/year
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p style={{
+                                            marginTop: '20px',
+                                            fontSize: '0.85em',
+                                            color: 'var(--mid-gray)',
+                                            fontStyle: 'italic'
+                                        }}>
+                                            Plus: No generator maintenance, noise, or fumes
+                                        </p>
+                                    </div>
+                                )}
+
+                                <div style={{
+                                    marginTop: '40px',
                                     padding: '30px',
                                     background: 'var(--off-white)',
                                     textAlign: 'center'
