@@ -484,6 +484,139 @@
             font-weight: 300;
         }
 
+        /* Calculator Page */
+        .calculator-input-group {
+            margin-bottom: 24px;
+        }
+
+        .calculator-input-group label {
+            display: block;
+            font-size: 0.7em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--mid-gray);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .calculator-input {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 1.1em;
+            border: 1px solid var(--lighter-gray);
+            background: var(--white);
+            color: var(--black);
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .calculator-input:focus {
+            outline: none;
+            border-color: var(--black);
+        }
+
+        .calculator-input::placeholder {
+            color: var(--light-gray);
+        }
+
+        .calculator-toggle-group {
+            display: flex;
+            gap: 0;
+            border: 1px solid var(--lighter-gray);
+        }
+
+        .calculator-toggle {
+            flex: 1;
+            padding: 16px 20px;
+            font-size: 0.75em;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: none;
+            background: var(--white);
+            color: var(--mid-gray);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            font-weight: 500;
+        }
+
+        .calculator-toggle:not(:last-child) {
+            border-right: 1px solid var(--lighter-gray);
+        }
+
+        .calculator-toggle.active {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .calculator-toggle:hover:not(.active) {
+            background: var(--off-white);
+        }
+
+        .calculator-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            font-size: 0.9em;
+            color: var(--dark-gray);
+        }
+
+        .calculator-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--black);
+            cursor: pointer;
+        }
+
+        .calculator-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .calculator-result-card {
+            padding: 40px 30px;
+            background: var(--white);
+            border: 1px solid var(--lighter-gray);
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        .calculator-result-card:hover {
+            border-color: var(--black);
+        }
+
+        .calculator-result-label {
+            font-size: 0.7em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--mid-gray);
+            margin-bottom: 15px;
+        }
+
+        .calculator-result-value {
+            font-size: 3em;
+            font-weight: 300;
+            color: var(--black);
+            letter-spacing: 2px;
+        }
+
+        .calculator-result-unit {
+            font-size: 0.9em;
+            color: var(--mid-gray);
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
+
+        .calculator-result-detail {
+            font-size: 0.85em;
+            color: var(--light-gray);
+            margin-top: 15px;
+            font-weight: 300;
+        }
+
         /* Contact Section */
         .contact {
             background: var(--white);
@@ -655,6 +788,7 @@
                     {currentPage === 'services' && <ServicesPage navigateTo={navigateTo} />}
                     {currentPage === 'projects' && <ProjectsPage navigateTo={navigateTo} />}
                     {currentPage === 'example' && <ExampleAnalysisPage navigateTo={navigateTo} />}
+                    {currentPage === 'calculator' && <CalculatorPage navigateTo={navigateTo} />}
                     <Footer />
                 </div>
             );
@@ -674,6 +808,7 @@
                             <li><a onClick={() => navigateTo('services')} className={currentPage === 'services' ? 'active' : ''}>Services</a></li>
                             <li><a onClick={() => navigateTo('projects')} className={currentPage === 'projects' ? 'active' : ''}>What We Do</a></li>
                             <li><a onClick={() => navigateTo('example')} className={currentPage === 'example' ? 'active' : ''}>Example Analysis</a></li>
+                            <li><a onClick={() => navigateTo('calculator')} className={currentPage === 'calculator' ? 'active' : ''}>Calculator</a></li>
                             <li><a onClick={() => navigateTo('home')} className="">Contact</a></li>
                         </ul>
                     </div>
@@ -1478,6 +1613,276 @@
 
                     <div className="cta-banner">
                         <p>Want a custom analysis like this for your facility? Get in touch.</p>
+                        <div className="hero-buttons" style={{justifyContent: 'center', marginTop: '20px'}}>
+                            <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
+                            <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function CalculatorPage({ navigateTo }) {
+            const { useState, useMemo } = React;
+
+            // Input state
+            const [clientType, setClientType] = useState('residential');
+            const [monthlyKwh, setMonthlyKwh] = useState('');
+            const [monthlyBill, setMonthlyBill] = useState('');
+            const [includeBattery, setIncludeBattery] = useState(false);
+            const [backupHours, setBackupHours] = useState(8);
+
+            // Client type configurations
+            const clientConfig = {
+                residential: {
+                    label: 'Residential',
+                    solarMatchFactor: 1.0,
+                    operatingHours: 16,
+                    placeholder: 'e.g. 800',
+                    description: 'Homes typically use 500-1500 kWh/month'
+                },
+                smallCommercial: {
+                    label: 'Small Commercial',
+                    solarMatchFactor: 0.9,
+                    operatingHours: 10,
+                    placeholder: 'e.g. 5000',
+                    description: 'Small businesses typically use 2000-10000 kWh/month'
+                },
+                largeCommercial: {
+                    label: 'Large Commercial',
+                    solarMatchFactor: 0.85,
+                    operatingHours: 16,
+                    placeholder: 'e.g. 25000',
+                    description: 'Industrial facilities typically use 10000-50000+ kWh/month'
+                }
+            };
+
+            // Solar calculation constants
+            const PEAK_SUN_HOURS = 4.5;
+            const SYSTEM_LOSSES = 0.80;
+            const PANEL_WATTAGE = 550;
+            const CO2_PER_KWH = 0.9;
+            const TREES_PER_TON_CO2 = 16.5;
+            const DOD_BUFFER = 1.2;
+
+            // Calculate results
+            const results = useMemo(() => {
+                const kwh = parseFloat(monthlyKwh) || 0;
+                if (kwh <= 0) return null;
+
+                const config = clientConfig[clientType];
+
+                // Solar sizing
+                const dailyUsage = kwh / 30;
+                const requiredKwp = (dailyUsage / PEAK_SUN_HOURS / SYSTEM_LOSSES) * config.solarMatchFactor;
+                const panelCount = Math.ceil((requiredKwp * 1000) / PANEL_WATTAGE);
+                const actualKwp = (panelCount * PANEL_WATTAGE) / 1000;
+                const annualProduction = actualKwp * PEAK_SUN_HOURS * 365 * SYSTEM_LOSSES;
+
+                // Battery sizing
+                const hourlyLoad = dailyUsage / config.operatingHours;
+                const batteryKwh = includeBattery ? Math.ceil(hourlyLoad * backupHours * DOD_BUFFER) : 0;
+
+                // Environmental impact
+                const co2OffsetTons = (annualProduction * CO2_PER_KWH) / 1000;
+                const treesEquivalent = Math.round(co2OffsetTons * TREES_PER_TON_CO2);
+
+                // Bill coverage estimate (assuming average R2.50/kWh)
+                const avgRate = 2.50;
+                const estimatedBill = monthlyBill ? parseFloat(monthlyBill) : kwh * avgRate;
+                const solarCoveragePercent = Math.min(100, Math.round((annualProduction / 12 / kwh) * 100));
+
+                return {
+                    systemKwp: actualKwp.toFixed(1),
+                    panelCount,
+                    annualProduction: Math.round(annualProduction),
+                    batteryKwh,
+                    co2OffsetTons: co2OffsetTons.toFixed(1),
+                    treesEquivalent,
+                    solarCoveragePercent,
+                    dailyUsage: dailyUsage.toFixed(1)
+                };
+            }, [monthlyKwh, clientType, includeBattery, backupHours, monthlyBill]);
+
+            return (
+                <div>
+                    <div className="page-header">
+                        <h1 className="section-title">SOLAR CALCULATOR</h1>
+                        <p className="section-subtitle">
+                            Estimate the right solar system size for your energy needs
+                        </p>
+                    </div>
+
+                    <section style={{background: 'var(--off-white)', padding: '80px 60px'}}>
+                        <div style={{maxWidth: '800px', margin: '0 auto'}}>
+
+                            {/* Client Type Selection */}
+                            <div className="calculator-input-group">
+                                <label>What type of property is this for?</label>
+                                <div className="calculator-toggle-group">
+                                    {Object.entries(clientConfig).map(([key, config]) => (
+                                        <button
+                                            key={key}
+                                            className={`calculator-toggle ${clientType === key ? 'active' : ''}`}
+                                            onClick={() => setClientType(key)}
+                                        >
+                                            {config.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Monthly kWh Input */}
+                            <div className="calculator-input-group">
+                                <label>Monthly electricity usage (kWh)</label>
+                                <input
+                                    type="number"
+                                    className="calculator-input"
+                                    placeholder={clientConfig[clientType].placeholder}
+                                    value={monthlyKwh}
+                                    onChange={(e) => setMonthlyKwh(e.target.value)}
+                                    min="0"
+                                />
+                                <p style={{fontSize: '0.85em', color: 'var(--mid-gray)', marginTop: '8px', fontWeight: '300'}}>
+                                    {clientConfig[clientType].description}
+                                </p>
+                            </div>
+
+                            {/* Monthly Bill Input (Optional) */}
+                            <div className="calculator-input-group">
+                                <label>Monthly electricity bill in Rands (optional)</label>
+                                <input
+                                    type="number"
+                                    className="calculator-input"
+                                    placeholder="e.g. 2500"
+                                    value={monthlyBill}
+                                    onChange={(e) => setMonthlyBill(e.target.value)}
+                                    min="0"
+                                />
+                                <p style={{fontSize: '0.85em', color: 'var(--mid-gray)', marginTop: '8px', fontWeight: '300'}}>
+                                    Used to estimate your potential savings
+                                </p>
+                            </div>
+
+                            {/* Battery Option */}
+                            <div className="calculator-input-group">
+                                <label className="calculator-checkbox">
+                                    <input
+                                        type="checkbox"
+                                        checked={includeBattery}
+                                        onChange={(e) => setIncludeBattery(e.target.checked)}
+                                    />
+                                    Include battery storage for backup power
+                                </label>
+                            </div>
+
+                            {/* Backup Hours Selection */}
+                            {includeBattery && (
+                                <div className="calculator-input-group" style={{marginLeft: '32px'}}>
+                                    <label>How many hours of backup do you need?</label>
+                                    <div className="calculator-toggle-group">
+                                        {[4, 8, 12, 24].map((hours) => (
+                                            <button
+                                                key={hours}
+                                                className={`calculator-toggle ${backupHours === hours ? 'active' : ''}`}
+                                                onClick={() => setBackupHours(hours)}
+                                            >
+                                                {hours}h
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <p style={{fontSize: '0.85em', color: 'var(--mid-gray)', marginTop: '8px', fontWeight: '300'}}>
+                                        {backupHours <= 4 ? 'Essential load backup during load shedding' :
+                                         backupHours <= 8 ? 'Extended backup for most load shedding events' :
+                                         backupHours <= 12 ? 'Full day coverage with margin' :
+                                         'Near-complete energy independence'}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+
+                    {/* Results Section */}
+                    {results && (
+                        <section style={{padding: '80px 60px'}}>
+                            <div style={{maxWidth: '1200px', margin: '0 auto'}}>
+                                <h2 className="section-title" style={{textAlign: 'center', marginBottom: '60px'}}>
+                                    YOUR ESTIMATED SYSTEM
+                                </h2>
+
+                                <div className="calculator-results">
+                                    {/* System Size Card */}
+                                    <div className="calculator-result-card">
+                                        <div className="calculator-result-label">Recommended System Size</div>
+                                        <div className="calculator-result-value">{results.systemKwp}</div>
+                                        <div className="calculator-result-unit">kWp</div>
+                                        <div className="calculator-result-detail">
+                                            {results.panelCount} × {PANEL_WATTAGE}W panels
+                                        </div>
+                                    </div>
+
+                                    {/* Annual Production Card */}
+                                    <div className="calculator-result-card">
+                                        <div className="calculator-result-label">Annual Production</div>
+                                        <div className="calculator-result-value">{(results.annualProduction / 1000).toFixed(1)}</div>
+                                        <div className="calculator-result-unit">MWh / year</div>
+                                        <div className="calculator-result-detail">
+                                            ~{Math.round(results.annualProduction / 12)} kWh per month
+                                        </div>
+                                    </div>
+
+                                    {/* Battery Card */}
+                                    {includeBattery && (
+                                        <div className="calculator-result-card">
+                                            <div className="calculator-result-label">Battery Capacity</div>
+                                            <div className="calculator-result-value">{results.batteryKwh}</div>
+                                            <div className="calculator-result-unit">kWh</div>
+                                            <div className="calculator-result-detail">
+                                                {backupHours} hours backup at average load
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Solar Coverage Card */}
+                                    <div className="calculator-result-card">
+                                        <div className="calculator-result-label">Estimated Solar Coverage</div>
+                                        <div className="calculator-result-value">{results.solarCoveragePercent}</div>
+                                        <div className="calculator-result-unit">% of usage</div>
+                                        <div className="calculator-result-detail">
+                                            During daylight hours
+                                        </div>
+                                    </div>
+
+                                    {/* Environmental Impact Card */}
+                                    <div className="calculator-result-card">
+                                        <div className="calculator-result-label">CO₂ Offset Per Year</div>
+                                        <div className="calculator-result-value">{results.co2OffsetTons}</div>
+                                        <div className="calculator-result-unit">tons</div>
+                                        <div className="calculator-result-detail">
+                                            Equivalent to {results.treesEquivalent} trees planted
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style={{
+                                    marginTop: '60px',
+                                    padding: '30px',
+                                    background: 'var(--off-white)',
+                                    textAlign: 'center'
+                                }}>
+                                    <p style={{fontSize: '0.9em', color: 'var(--mid-gray)', fontWeight: '300', lineHeight: '1.8'}}>
+                                        These are estimates based on typical South African conditions.
+                                        Actual system sizing depends on your roof space, orientation, shading,
+                                        and specific energy usage patterns. Contact us for a detailed assessment.
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                    )}
+
+                    {/* CTA Banner */}
+                    <div className="cta-banner">
+                        <p>Ready for an accurate quote? We'll assess your site and energy needs.</p>
                         <div className="hero-buttons" style={{justifyContent: 'center', marginTop: '20px'}}>
                             <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
                             <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
