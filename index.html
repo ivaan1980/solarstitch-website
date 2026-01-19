@@ -894,7 +894,7 @@
                 { page: 'home', label: 'Home' },
                 { page: 'services', label: 'Services' },
                 { page: 'projects', label: 'What We Do' },
-                { page: 'example', label: 'Example Analysis' },
+                { page: 'example', label: 'Case Study' },
                 { page: 'calculator', label: 'Calculator' },
                 { page: 'home', label: 'Contact', isContact: true }
             ];
@@ -1402,7 +1402,7 @@
             );
         }
 
-        /* ===== EXAMPLE ANALYSIS PAGE ===== */
+        /* ===== CASE STUDY PAGE ===== */
         function ExampleAnalysisPage({ navigateTo }) {
             const { useState, useMemo } = React;
             const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, BarChart, Bar, ComposedChart } = Recharts;
@@ -1410,6 +1410,7 @@
             const [viewMode, setViewMode] = useState('summer');
             const [showPPA, setShowPPA] = useState(true);
             const [dayType, setDayType] = useState('weekday');
+            const [activeSection, setActiveSection] = useState('all');
 
             const colors = {
                 primary: '#1a1a1a',
@@ -1420,8 +1421,50 @@
                 text: '#333333',
                 muted: '#888888',
                 border: '#e5e5e5',
+                success: '#16a34a',
+                danger: '#dc2626',
             };
 
+            // ===== BITZER VSD RETROFIT DATA =====
+            const bitzerData = {
+                compressorCount: 12,
+                beforeStartupMultiple: 7,
+                afterStartupMultiple: 2.5,
+                beforeMonthlyKwh: 18000,
+                afterMonthlyKwh: 12240,
+                energySavingsPercent: 32,
+                beforePeakDemandKva: 180,
+                afterPeakDemandKva: 140,
+                demandReductionKva: 40,
+            };
+
+            // Startup current profile data (10 seconds)
+            const startupData = [
+                { time: '0s', traditional: 1, vsd: 1 },
+                { time: '0.5s', traditional: 7, vsd: 1.3 },
+                { time: '1s', traditional: 6.5, vsd: 1.8 },
+                { time: '2s', traditional: 4, vsd: 2.2 },
+                { time: '3s', traditional: 2, vsd: 2.5 },
+                { time: '4s', traditional: 1.5, vsd: 2.3 },
+                { time: '5s', traditional: 1.2, vsd: 2 },
+                { time: '7s', traditional: 1, vsd: 1.5 },
+                { time: '10s', traditional: 1, vsd: 1 },
+            ];
+
+            // Combined results
+            const combinedResults = {
+                totalMonthlySavings: 56000,
+                vsdSavingsMonthly: 18000,
+                solarSavingsMonthly: 35000,
+                demandSavingsMonthly: 3000,
+                paybackYears: 3.2,
+                generatorHoursEliminated: 40,
+                dieselLitresSaved: 800,
+                co2OffsetTons: 108,
+                twentyYearSavings: 15000000,
+            };
+
+            // ===== SOLAR SYSTEM DATA =====
             const systemSize = 60;
             const numPanels = 110;
             const panelWattage = 550;
@@ -1527,22 +1570,177 @@
             return (
                 <div>
                     <div className="page-header">
-                        <h1 className="section-title">EXAMPLE ANALYSIS</h1>
+                        <h1 className="section-title">CASE STUDY</h1>
                         <p className="section-subtitle">
-                            Interactive system design and financial analysis for a 60kW commercial solar installation
+                            How we reduced a supermarket's energy costs by 45% with VSD retrofits and solar
                         </p>
                     </div>
+
+                    {/* ===== SECTION 1: THE CHALLENGE ===== */}
+                    <section style={{ padding: '60px', backgroundColor: colors.white }}>
+                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                            <h2 style={{ fontSize: '12px', fontWeight: '500', letterSpacing: '4px', color: colors.muted, textTransform: 'uppercase', marginBottom: '16px' }}>
+                                The Challenge
+                            </h2>
+                            <h3 style={{ fontSize: '2em', fontWeight: '300', color: colors.primary, marginBottom: '40px', letterSpacing: '1px' }}>
+                                Sample Retail Supermarket
+                            </h3>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '40px' }}>
+                                <div>
+                                    <p style={{ fontSize: '1.1em', lineHeight: '1.8', color: colors.secondary, marginBottom: '24px' }}>
+                                        A mid-sized supermarket struggling with high energy costs and frequent load shedding disruptions.
+                                        Their refrigeration systems were consuming massive amounts of power, and traditional compressor
+                                        startup surges made solar adoption seem impossible.
+                                    </p>
+                                    <ul style={{ listStyle: 'none', padding: 0 }}>
+                                        {[
+                                            'High startup currents blocking solar adoption',
+                                            'R125,000/month electricity bill',
+                                            '40 hours/month running diesel generators',
+                                            'Frequent compressor failures from hard starts'
+                                        ].map((item, i) => (
+                                            <li key={i} style={{ padding: '12px 0', borderBottom: '1px solid ' + colors.border, color: colors.text, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                <span style={{ color: colors.danger, fontSize: '1.2em' }}>×</span>
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
+                                    {[
+                                        { label: 'Compressors', value: '12', sub: 'Walk-in freezers & display fridges' },
+                                        { label: 'Monthly Usage', value: '45,000', sub: 'kWh per month' },
+                                        { label: 'Peak Demand', value: '180', sub: 'kVA maximum' },
+                                        { label: 'Startup Current', value: '6-8×', sub: 'Running current multiplier' },
+                                    ].map((item, i) => (
+                                        <div key={i} style={{ backgroundColor: colors.background, padding: '24px', textAlign: 'center' }}>
+                                            <div style={{ fontSize: '10px', letterSpacing: '2px', color: colors.muted, marginBottom: '8px', textTransform: 'uppercase' }}>{item.label}</div>
+                                            <div style={{ fontSize: '2.5em', fontWeight: '300', color: colors.primary }}>{item.value}</div>
+                                            <div style={{ fontSize: '11px', color: colors.light, marginTop: '4px' }}>{item.sub}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* ===== SECTION 2: PHASE 1 - BITZER VSD RETROFIT ===== */}
+                    <section style={{ padding: '60px', backgroundColor: colors.background }}>
+                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+                                <span style={{ backgroundColor: colors.primary, color: colors.white, padding: '8px 16px', fontSize: '11px', fontWeight: '600', letterSpacing: '2px' }}>PHASE 1</span>
+                                <h2 style={{ fontSize: '12px', fontWeight: '500', letterSpacing: '4px', color: colors.muted, textTransform: 'uppercase', margin: 0 }}>
+                                    Bitzer VSD Compressor Retrofit
+                                </h2>
+                            </div>
+                            <h3 style={{ fontSize: '1.8em', fontWeight: '300', color: colors.primary, marginBottom: '40px' }}>
+                                Solving the Startup Current Problem
+                            </h3>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px', marginBottom: '40px' }}>
+                                <div>
+                                    <div style={{ marginBottom: '32px' }}>
+                                        <h4 style={{ color: colors.danger, fontSize: '0.9em', letterSpacing: '2px', marginBottom: '12px' }}>THE PROBLEM</h4>
+                                        <p style={{ color: colors.secondary, lineHeight: '1.8' }}>
+                                            Traditional compressors draw 6-8× their normal current when starting. This massive "inrush current"
+                                            meant any solar system would need an oversized, expensive inverter just to handle the startup surges.
+                                        </p>
+                                    </div>
+                                    <div style={{ marginBottom: '32px' }}>
+                                        <h4 style={{ color: colors.success, fontSize: '0.9em', letterSpacing: '2px', marginBottom: '12px' }}>THE SOLUTION</h4>
+                                        <p style={{ color: colors.secondary, lineHeight: '1.8' }}>
+                                            We retrofitted the existing compressors with Bitzer equipment and ABB Variable Speed Drives.
+                                            The VSD provides a smooth, intelligent ramp-up—using only 2-3× running current instead of 6-8×.
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4 style={{ color: colors.primary, fontSize: '0.9em', letterSpacing: '2px', marginBottom: '12px' }}>ADDITIONAL BENEFITS</h4>
+                                        <ul style={{ listStyle: 'none', padding: 0 }}>
+                                            {['Reduced mechanical stress on compressors', 'Better temperature control', 'Quieter operation', 'Extended equipment lifespan', 'Lower maintenance costs'].map((item, i) => (
+                                                <li key={i} style={{ padding: '8px 0', color: colors.secondary, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                    <span style={{ color: colors.success }}>✓</span> {item}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                {/* Startup Current Chart */}
+                                <div style={{ backgroundColor: colors.white, borderRadius: '8px', padding: '24px' }}>
+                                    <h4 style={{ fontSize: '11px', fontWeight: '500', letterSpacing: '3px', color: colors.secondary, marginBottom: '24px', textTransform: 'uppercase' }}>
+                                        Compressor Startup Current Profile
+                                    </h4>
+                                    <ResponsiveContainer width="100%" height={280}>
+                                        <LineChart data={startupData}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke={colors.border} />
+                                            <XAxis dataKey="time" stroke={colors.muted} tick={{ fontSize: 11 }} />
+                                            <YAxis stroke={colors.muted} tick={{ fontSize: 11 }} label={{ value: '× Running Current', angle: -90, position: 'insideLeft', fill: colors.muted, fontSize: 10 }} domain={[0, 8]} />
+                                            <Tooltip formatter={(value) => [`${value}×`, '']} />
+                                            <Legend wrapperStyle={{ paddingTop: '16px' }} />
+                                            <Line type="monotone" dataKey="traditional" name="Traditional Start" stroke={colors.danger} strokeWidth={3} dot={{ fill: colors.danger, r: 4 }} />
+                                            <Line type="monotone" dataKey="vsd" name="VSD Soft Start" stroke={colors.success} strokeWidth={3} dot={{ fill: colors.success, r: 4 }} />
+                                        </LineChart>
+                                    </ResponsiveContainer>
+                                    <p style={{ fontSize: '12px', color: colors.muted, textAlign: 'center', marginTop: '16px' }}>
+                                        VSD eliminates the dangerous 7× startup spike
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* VSD KPI Cards */}
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
+                                {[
+                                    { label: 'Startup Current', before: '6-8×', after: '2-3×', sub: 'Running current multiplier' },
+                                    { label: 'Energy Savings', before: '0%', after: '32%', sub: 'Refrigeration consumption' },
+                                    { label: 'Peak Demand', before: '180 kVA', after: '140 kVA', sub: '40 kVA reduction' },
+                                ].map((item, i) => (
+                                    <div key={i} style={{ backgroundColor: colors.white, borderRadius: '8px', padding: '24px', textAlign: 'center' }}>
+                                        <div style={{ fontSize: '10px', letterSpacing: '2px', color: colors.muted, marginBottom: '16px', textTransform: 'uppercase' }}>{item.label}</div>
+                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px' }}>
+                                            <div>
+                                                <div style={{ fontSize: '1.5em', fontWeight: '300', color: colors.light, textDecoration: 'line-through' }}>{item.before}</div>
+                                                <div style={{ fontSize: '10px', color: colors.light }}>Before</div>
+                                            </div>
+                                            <span style={{ fontSize: '1.5em', color: colors.muted }}>→</span>
+                                            <div>
+                                                <div style={{ fontSize: '2em', fontWeight: '300', color: colors.success }}>{item.after}</div>
+                                                <div style={{ fontSize: '10px', color: colors.success }}>After</div>
+                                            </div>
+                                        </div>
+                                        <div style={{ fontSize: '11px', color: colors.light, marginTop: '12px' }}>{item.sub}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* ===== SECTION 3: PHASE 2 - SOLAR INSTALLATION ===== */}
+                    <section style={{ padding: '60px', backgroundColor: colors.white }}>
+                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+                                <span style={{ backgroundColor: colors.primary, color: colors.white, padding: '8px 16px', fontSize: '11px', fontWeight: '600', letterSpacing: '2px' }}>PHASE 2</span>
+                                <h2 style={{ fontSize: '12px', fontWeight: '500', letterSpacing: '4px', color: colors.muted, textTransform: 'uppercase', margin: 0 }}>
+                                    60 kWp Solar Installation
+                                </h2>
+                            </div>
+                            <h3 style={{ fontSize: '1.8em', fontWeight: '300', color: colors.primary, marginBottom: '16px' }}>
+                                Now Solar Works — Thanks to the VSD Retrofit
+                            </h3>
+                            <p style={{ color: colors.secondary, marginBottom: '40px', maxWidth: '700px' }}>
+                                With startup currents under control, we could install a properly-sized 60kWp solar system
+                                instead of the 100kWp+ that would have been needed to handle the original surges.
+                            </p>
+                        </div>
+                    </section>
 
                     <div style={{ backgroundColor: colors.background, padding: '40px 60px' }}>
                         <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
 
-                            {/* Header */}
+                            {/* Solar System Header */}
                             <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-                                <h2 style={{ fontSize: '14px', fontWeight: '400', letterSpacing: '6px', color: colors.secondary, textTransform: 'uppercase', marginBottom: '8px' }}>
-                                    Sample Commercial Facility
-                                </h2>
                                 <p style={{ color: colors.muted, fontSize: '13px', letterSpacing: '2px' }}>
-                                    60 kWp Solar System — Zero Export Configuration
+                                    {numPanels} × {panelWattage}W Panels — Zero Export Configuration
                                 </p>
                             </div>
 
@@ -1735,14 +1933,144 @@
                                     60 kWp · {numPanels} × {panelWattage}W Panels · 2 × 30kW Solis Inverters · Zero Export
                                 </p>
                                 <p style={{ color: colors.light, fontSize: '11px' }}>
-                                    Example System Design & Financial Analysis
+                                    Solar System Design & Financial Analysis
                                 </p>
                             </div>
                         </div>
                     </div>
 
+                    {/* ===== SECTION 4: COMBINED RESULTS ===== */}
+                    <section style={{ padding: '60px', backgroundColor: colors.white }}>
+                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                            <h2 style={{ fontSize: '12px', fontWeight: '500', letterSpacing: '4px', color: colors.muted, textTransform: 'uppercase', marginBottom: '16px' }}>
+                                Combined Results
+                            </h2>
+                            <h3 style={{ fontSize: '2em', fontWeight: '300', color: colors.primary, marginBottom: '40px' }}>
+                                The Complete Energy Transformation
+                            </h3>
+
+                            {/* Implementation Timeline */}
+                            <div style={{ display: 'flex', justifyContent: 'center', gap: '0', marginBottom: '60px', flexWrap: 'wrap' }}>
+                                {[
+                                    { phase: 'Month 1-2', title: 'VSD Retrofit', desc: 'Bitzer compressor upgrades' },
+                                    { phase: 'Month 3-4', title: 'Solar Install', desc: '60kWp system commissioned' },
+                                    { phase: 'Month 5+', title: 'Full Benefits', desc: '45% cost reduction achieved' },
+                                ].map((item, i) => (
+                                    <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                                        <div style={{ padding: '24px 32px', backgroundColor: i === 2 ? colors.primary : colors.background, textAlign: 'center', minWidth: '180px' }}>
+                                            <div style={{ fontSize: '10px', letterSpacing: '2px', color: i === 2 ? colors.light : colors.muted, marginBottom: '8px' }}>{item.phase}</div>
+                                            <div style={{ fontSize: '1.1em', fontWeight: '500', color: i === 2 ? colors.white : colors.primary, marginBottom: '4px' }}>{item.title}</div>
+                                            <div style={{ fontSize: '12px', color: i === 2 ? colors.light : colors.light }}>{item.desc}</div>
+                                        </div>
+                                        {i < 2 && <div style={{ width: '40px', height: '2px', backgroundColor: colors.border }} />}
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Total Impact KPI Cards */}
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '24px', marginBottom: '40px' }}>
+                                {[
+                                    { label: 'Total Monthly Savings', value: 'R56,000', sub: 'Combined VSD + Solar', highlight: true },
+                                    { label: 'Payback Period', value: '3.2', unit: 'years', sub: 'Full system investment' },
+                                    { label: 'Generator Eliminated', value: '40', unit: 'hrs/month', sub: 'Diesel backup no longer needed' },
+                                    { label: 'Diesel Saved', value: '800', unit: 'litres/month', sub: 'R19,200/month fuel savings' },
+                                    { label: 'CO₂ Offset', value: '108', unit: 'tons/year', sub: 'Environmental impact' },
+                                    { label: '20-Year Savings', value: 'R15M', sub: 'Projected lifetime benefit' },
+                                ].map((item, i) => (
+                                    <div key={i} style={{
+                                        backgroundColor: item.highlight ? colors.primary : colors.background,
+                                        padding: '28px 20px',
+                                        textAlign: 'center',
+                                        borderRadius: '4px'
+                                    }}>
+                                        <div style={{ fontSize: '10px', letterSpacing: '2px', color: item.highlight ? colors.light : colors.muted, marginBottom: '12px', textTransform: 'uppercase' }}>{item.label}</div>
+                                        <div style={{ fontSize: '2.5em', fontWeight: '300', color: item.highlight ? colors.white : colors.success }}>
+                                            {item.value}
+                                            {item.unit && <span style={{ fontSize: '0.4em', color: item.highlight ? colors.light : colors.muted }}> {item.unit}</span>}
+                                        </div>
+                                        <div style={{ fontSize: '11px', color: item.highlight ? colors.light : colors.light, marginTop: '8px' }}>{item.sub}</div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Savings Breakdown */}
+                            <div style={{ backgroundColor: colors.background, padding: '32px', borderRadius: '8px' }}>
+                                <h4 style={{ fontSize: '11px', fontWeight: '500', letterSpacing: '3px', color: colors.secondary, marginBottom: '24px', textTransform: 'uppercase', textAlign: 'center' }}>
+                                    Monthly Savings Breakdown
+                                </h4>
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: '40px', flexWrap: 'wrap' }}>
+                                    {[
+                                        { label: 'VSD Energy Savings', value: 18000, color: colors.primary },
+                                        { label: 'Solar Offset', value: 35000, color: colors.success },
+                                        { label: 'Demand Charge Reduction', value: 3000, color: colors.secondary },
+                                    ].map((item, i) => (
+                                        <div key={i} style={{ textAlign: 'center' }}>
+                                            <div style={{
+                                                width: '80px',
+                                                height: `${item.value / 400}px`,
+                                                backgroundColor: item.color,
+                                                marginBottom: '12px',
+                                                borderRadius: '4px 4px 0 0'
+                                            }} />
+                                            <div style={{ fontSize: '1.3em', fontWeight: '400', color: colors.primary }}>R{item.value.toLocaleString()}</div>
+                                            <div style={{ fontSize: '11px', color: colors.muted, marginTop: '4px', maxWidth: '100px' }}>{item.label}</div>
+                                        </div>
+                                    ))}
+                                    <div style={{ textAlign: 'center', paddingLeft: '20px', borderLeft: '2px solid ' + colors.border }}>
+                                        <div style={{ fontSize: '2.5em', fontWeight: '300', color: colors.success }}>R56,000</div>
+                                        <div style={{ fontSize: '12px', color: colors.muted, marginTop: '4px' }}>Total Monthly</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* ===== SECTION 5: KEY TAKEAWAYS ===== */}
+                    <section style={{ padding: '60px', backgroundColor: colors.background }}>
+                        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+                            <h2 style={{ fontSize: '12px', fontWeight: '500', letterSpacing: '4px', color: colors.muted, textTransform: 'uppercase', marginBottom: '16px', textAlign: 'center' }}>
+                                Key Takeaways
+                            </h2>
+                            <h3 style={{ fontSize: '1.8em', fontWeight: '300', color: colors.primary, marginBottom: '40px', textAlign: 'center' }}>
+                                What Made This Work
+                            </h3>
+
+                            <div style={{ display: 'grid', gap: '24px' }}>
+                                {[
+                                    { num: '1', title: 'VSD Retrofit Before Solar', desc: 'By reducing startup currents first, we could install a properly-sized solar system instead of an oversized one. This saved the client significant upfront costs.' },
+                                    { num: '2', title: 'Complete System Understanding', desc: 'We didn\'t just install panels—we understood the refrigeration load profile, identified inefficiencies, and designed a solution that addresses the root cause.' },
+                                    { num: '3', title: 'Phased Implementation', desc: 'Breaking the project into phases made it financially manageable. Phase 1 savings helped fund Phase 2, reducing the overall payback period.' },
+                                    { num: '4', title: 'Ongoing Monitoring', desc: 'Real-time energy analytics via Phy Engineering ensures the system continues to perform optimally and any issues are caught early.' },
+                                ].map((item, i) => (
+                                    <div key={i} style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', backgroundColor: colors.white, padding: '32px', borderRadius: '8px' }}>
+                                        <div style={{
+                                            width: '48px',
+                                            height: '48px',
+                                            backgroundColor: colors.primary,
+                                            color: colors.white,
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '1.2em',
+                                            fontWeight: '500',
+                                            flexShrink: 0
+                                        }}>
+                                            {item.num}
+                                        </div>
+                                        <div>
+                                            <h4 style={{ fontSize: '1.1em', fontWeight: '500', color: colors.primary, marginBottom: '8px' }}>{item.title}</h4>
+                                            <p style={{ color: colors.secondary, lineHeight: '1.7', margin: 0 }}>{item.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* ===== CTA BANNER ===== */}
                     <div className="cta-banner">
-                        <p>Want a custom analysis like this for your facility? Get in touch.</p>
+                        <p>Want results like these? Let's analyze your facility.</p>
                         <div className="hero-buttons" style={{justifyContent: 'center', marginTop: '20px'}}>
                             <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
                             <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
