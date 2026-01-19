@@ -628,19 +628,28 @@
         }
 
         .calculator-checkbox {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 12px;
             cursor: pointer;
             font-size: 0.9em;
             color: var(--dark-gray);
+            line-height: 1;
         }
 
         .calculator-checkbox input[type="checkbox"] {
             width: 20px;
             height: 20px;
+            min-width: 20px;
+            margin: 0;
             accent-color: var(--black);
             cursor: pointer;
+            vertical-align: middle;
+        }
+
+        .calculator-checkbox span {
+            vertical-align: middle;
+            line-height: 1.4;
         }
 
         .calculator-results {
@@ -1892,7 +1901,7 @@
                                         checked={includeBattery}
                                         onChange={(e) => setIncludeBattery(e.target.checked)}
                                     />
-                                    Include battery storage for backup power
+                                    <span>Include battery storage for backup power</span>
                                 </label>
                             </div>
 
