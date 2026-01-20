@@ -86,6 +86,16 @@ test.describe('Quote Form', () => {
         console.log('All steps completed successfully!');
     });
 
+    test('Contact page loads and displays correct info', async ({ page }) => {
+        await page.click('text=Contact');
+        await expect(page.locator('h1:has-text("Contact Us")')).toBeVisible();
+        await expect(page.locator('main >> text=+27 82 573 9565')).toBeVisible();
+        await expect(page.locator('main >> text=admin@solarstitch.co.za')).toBeVisible();
+        await expect(page.locator('main >> text=Cape Town')).toBeVisible();
+        await expect(page.locator('main >> text=Bloemfontein')).toBeVisible();
+        await expect(page.locator('text=We respond within 24 hours')).toBeVisible();
+    });
+
     test('can navigate back through steps', async ({ page }) => {
         await page.click('text=Get Quote');
 

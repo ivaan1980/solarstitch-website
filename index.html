@@ -104,6 +104,14 @@
             color: var(--black);
         }
 
+        .nav-phone a {
+            color: var(--black) !important;
+            font-weight: 500;
+            border-left: 1px solid var(--lighter-gray);
+            padding-left: 30px;
+            margin-left: 10px;
+        }
+
         /* Mobile Menu */
         .mobile-menu-toggle {
             display: none;
@@ -1128,6 +1136,7 @@
                     {currentPage === 'example' && <ExampleAnalysisPage navigateTo={navigateTo} />}
                     {currentPage === 'calculator' && <CalculatorPage navigateTo={navigateTo} />}
                     {currentPage === 'quote' && <QuotePage navigateTo={navigateTo} />}
+                    {currentPage === 'contact' && <ContactPage navigateTo={navigateTo} />}
                     <Footer />
                 </div>
             );
@@ -1148,7 +1157,7 @@
                 { page: 'example', label: 'Case Study' },
                 { page: 'calculator', label: 'Calculator' },
                 { page: 'quote', label: 'Get Quote' },
-                { page: 'home', label: 'Contact', isContact: true }
+                { page: 'contact', label: 'Contact' }
             ];
 
             return (
@@ -1164,12 +1173,15 @@
                                 <li key={i}>
                                     <a
                                         onClick={() => handleNavigate(item.page)}
-                                        className={!item.isContact && currentPage === item.page ? 'active' : ''}
+                                        className={currentPage === item.page ? 'active' : ''}
                                     >
                                         {item.label}
                                     </a>
                                 </li>
                             ))}
+                            <li className="nav-phone">
+                                <a href="tel:+27825739565">+27 82 573 9565</a>
+                            </li>
                         </ul>
                         <div
                             className={`mobile-menu-toggle ${mobileMenuOpen ? 'open' : ''}`}
@@ -1203,11 +1215,82 @@
             return (
                 <div>
                     <Hero navigateTo={navigateTo} />
+                    <TrustSignals />
                     <AboutSolarStitch />
                     <EnergyWasteProblem navigateTo={navigateTo} />
+                    <Testimonials />
                     <FAQ />
                     <Contact />
                 </div>
+            );
+        }
+
+        function TrustSignals() {
+            const signals = [
+                { number: '20+', label: 'Years Experience' },
+                { number: '24hr', label: 'Response Time' },
+                { number: '100+', label: 'Projects Completed' },
+                { number: 'ABB', label: 'Certified Trained' }
+            ];
+
+            return (
+                <section style={{ background: 'var(--off-white)', padding: '40px 0' }}>
+                    <div className="container">
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '60px', flexWrap: 'wrap' }}>
+                            {signals.map((signal, i) => (
+                                <div key={i} style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '2em', fontWeight: '600', color: 'var(--black)', letterSpacing: '2px' }}>
+                                        {signal.number}
+                                    </div>
+                                    <div style={{ fontSize: '0.7em', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--mid-gray)', marginTop: '5px' }}>
+                                        {signal.label}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        function Testimonials() {
+            const testimonials = [
+                {
+                    quote: "Solar Stitch transformed our butchery's energy profile. The Bitzer VSD retrofit reduced our compressor power draw significantly, and the solar system now covers most of our daytime usage. Our electricity bill dropped by over 40%.",
+                    name: "Butchery Owner",
+                    location: "Cape Town"
+                },
+                {
+                    quote: "We were skeptical about solar for our restaurant because of the walk-in freezers. Solar Stitch showed us how to optimize the cooling systems first, then right-size the solar. The result? Lower costs and zero load shedding impact during the day.",
+                    name: "Restaurant Manager",
+                    location: "Bloemfontein"
+                },
+                {
+                    quote: "Professional, honest, and they actually saved us money by recommending a smaller system than we initially wanted. They measured everything first and proved we didn't need the bigger setup. Rare to find that kind of integrity.",
+                    name: "Business Owner",
+                    location: "Western Cape"
+                }
+            ];
+
+            return (
+                <section className="about" style={{ background: 'var(--white)' }}>
+                    <div className="container">
+                        <h2 className="section-title">WHAT OUR CLIENTS SAY</h2>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px', marginTop: '40px' }}>
+                            {testimonials.map((t, i) => (
+                                <div key={i} style={{ padding: '30px', border: '1px solid var(--lighter-gray)', background: 'var(--off-white)' }}>
+                                    <p style={{ fontSize: '1em', lineHeight: '1.8', color: 'var(--dark-gray)', marginBottom: '25px', fontStyle: 'italic' }}>
+                                        "{t.quote}"
+                                    </p>
+                                    <div>
+                                        <p style={{ fontWeight: '500', marginBottom: '5px' }}>{t.name}</p>
+                                        <p style={{ fontSize: '0.85em', color: 'var(--mid-gray)' }}>{t.location}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
             );
         }
 
@@ -1225,9 +1308,9 @@
                         Whether you're running on solar, the grid, or generators, we help you save money through smart energy management, efficient equipment retrofits, and optimized systems.
                     </p>
                     <div className="hero-buttons">
-                        <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
+                        <a className="cta-button primary" onClick={() => navigateTo('quote')}>Get a Free Energy Audit</a>
                         <a className="cta-button" onClick={() => navigateTo('projects')}>Learn About Bitzer Retrofits</a>
-                        <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
+                        <a className="cta-button" onClick={() => navigateTo('contact')}>Talk to Our Team</a>
                     </div>
                 </section>
             );
@@ -1403,9 +1486,9 @@
                         </p>
 
                         <div className="hero-buttons" style={{justifyContent: 'center', marginBottom: '60px'}}>
-                            <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
+                            <a className="cta-button primary" onClick={() => navigateTo('quote')}>Get a Free Energy Audit</a>
                             <a className="cta-button" onClick={() => document.getElementById('projects') && window.scrollTo(0,0)}>Learn About Bitzer Retrofits</a>
-                            <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
+                            <a className="cta-button" onClick={() => navigateTo('contact')}>Talk to Our Team</a>
                         </div>
 
                         <div className="contact-info">
@@ -1505,8 +1588,8 @@
                     <div className="cta-banner">
                         <p>Need help with your energy system? Get in touch for a free consultation.</p>
                         <div className="hero-buttons" style={{justifyContent: 'center', marginTop: '20px'}}>
-                            <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
-                            <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
+                            <a className="cta-button primary" onClick={() => navigateTo('quote')}>Get a Free Energy Audit</a>
+                            <a className="cta-button" onClick={() => navigateTo('contact')}>Talk to Our Team</a>
                         </div>
                     </div>
                 </div>
@@ -1646,8 +1729,8 @@
                     <div className="cta-banner">
                         <p>Ready to cut your energy costs? Get in touch for a free consultation.</p>
                         <div className="hero-buttons" style={{justifyContent: 'center', marginTop: '20px'}}>
-                            <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
-                            <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
+                            <a className="cta-button primary" onClick={() => navigateTo('quote')}>Get a Free Energy Audit</a>
+                            <a className="cta-button" onClick={() => navigateTo('contact')}>Talk to Our Team</a>
                         </div>
                     </div>
                 </div>
@@ -2324,8 +2407,8 @@
                     <div className="cta-banner">
                         <p>Want results like these? Let's analyze your facility.</p>
                         <div className="hero-buttons" style={{justifyContent: 'center', marginTop: '20px'}}>
-                            <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
-                            <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
+                            <a className="cta-button primary" onClick={() => navigateTo('quote')}>Get a Free Energy Audit</a>
+                            <a className="cta-button" onClick={() => navigateTo('contact')}>Talk to Our Team</a>
                         </div>
                     </div>
                 </div>
@@ -2921,8 +3004,8 @@
                     <div className="cta-banner">
                         <p>Ready for an accurate quote? We'll assess your site and energy needs.</p>
                         <div className="hero-buttons" style={{justifyContent: 'center', marginTop: '20px'}}>
-                            <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
-                            <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
+                            <a className="cta-button primary" onClick={() => navigateTo('quote')}>Get a Free Energy Audit</a>
+                            <a className="cta-button" onClick={() => navigateTo('contact')}>Talk to Our Team</a>
                         </div>
                     </div>
                 </div>
@@ -3406,6 +3489,161 @@
                         </div>
                     </div>
                 </div>
+            );
+        }
+
+        function ContactPage({ navigateTo }) {
+            const [formData, setFormData] = useState({
+                name: '',
+                email: '',
+                phone: '',
+                service: '',
+                message: ''
+            });
+
+            const updateField = (field, value) => {
+                setFormData(prev => ({ ...prev, [field]: value }));
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                const subject = encodeURIComponent(`Contact Request - ${formData.name}`);
+                const body = encodeURIComponent(
+                    `Name: ${formData.name}\n` +
+                    `Email: ${formData.email}\n` +
+                    `Phone: ${formData.phone}\n` +
+                    `Service Interest: ${formData.service}\n\n` +
+                    `Message:\n${formData.message}`
+                );
+                window.location.href = `mailto:admin@solarstitch.co.za?subject=${subject}&body=${body}`;
+            };
+
+            return (
+                <main>
+                    <div className="page-header">
+                        <h1>Contact Us</h1>
+                        <p>We respond within 24 hours</p>
+                    </div>
+
+                    <section className="section">
+                        <div className="container" style={{ maxWidth: '1000px' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '60px' }}>
+
+                                {/* Contact Form */}
+                                <div>
+                                    <h2 style={{ fontSize: '1.5em', marginBottom: '30px', fontWeight: 300 }}>Send us a message</h2>
+                                    <form onSubmit={handleSubmit}>
+                                        <input
+                                            type="text"
+                                            className="quote-input"
+                                            placeholder="Full Name *"
+                                            value={formData.name}
+                                            onChange={(e) => updateField('name', e.target.value)}
+                                            required
+                                        />
+                                        <input
+                                            type="email"
+                                            className="quote-input"
+                                            placeholder="Email Address *"
+                                            value={formData.email}
+                                            onChange={(e) => updateField('email', e.target.value)}
+                                            required
+                                        />
+                                        <input
+                                            type="tel"
+                                            className="quote-input"
+                                            placeholder="Phone Number"
+                                            value={formData.phone}
+                                            onChange={(e) => updateField('phone', e.target.value)}
+                                        />
+                                        <select
+                                            className="quote-input"
+                                            value={formData.service}
+                                            onChange={(e) => updateField('service', e.target.value)}
+                                            style={{ color: formData.service ? 'var(--black)' : 'var(--light-gray)' }}
+                                        >
+                                            <option value="">Service Interest (Optional)</option>
+                                            <option value="Energy Audit">Energy Audit</option>
+                                            <option value="Solar Installation">Solar Installation</option>
+                                            <option value="Bitzer VSD Retrofit">Bitzer VSD Retrofit</option>
+                                            <option value="Energy Monitoring">Energy Monitoring</option>
+                                            <option value="Maintenance">Maintenance & Support</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                        <textarea
+                                            className="quote-input quote-textarea"
+                                            placeholder="Your Message *"
+                                            value={formData.message}
+                                            onChange={(e) => updateField('message', e.target.value)}
+                                            required
+                                            style={{ minHeight: '150px' }}
+                                        />
+                                        <button
+                                            type="submit"
+                                            className="cta-button primary"
+                                            style={{ width: '100%', marginTop: '10px' }}
+                                        >
+                                            Send Message
+                                        </button>
+                                    </form>
+                                </div>
+
+                                {/* Contact Info */}
+                                <div>
+                                    <h2 style={{ fontSize: '1.5em', marginBottom: '30px', fontWeight: 300 }}>Get in touch</h2>
+
+                                    <div style={{ marginBottom: '40px' }}>
+                                        <h3 style={{ fontSize: '0.75em', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--mid-gray)', marginBottom: '15px' }}>Phone</h3>
+                                        <a href="tel:+27825739565" style={{ fontSize: '1.2em', color: 'var(--black)', textDecoration: 'none' }}>
+                                            +27 82 573 9565
+                                        </a>
+                                    </div>
+
+                                    <div style={{ marginBottom: '40px' }}>
+                                        <h3 style={{ fontSize: '0.75em', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--mid-gray)', marginBottom: '15px' }}>Email</h3>
+                                        <a href="mailto:admin@solarstitch.co.za" style={{ fontSize: '1.1em', color: 'var(--black)', textDecoration: 'none' }}>
+                                            admin@solarstitch.co.za
+                                        </a>
+                                    </div>
+
+                                    <div style={{ marginBottom: '40px' }}>
+                                        <h3 style={{ fontSize: '0.75em', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--mid-gray)', marginBottom: '15px' }}>Service Areas</h3>
+                                        <p style={{ marginBottom: '10px' }}>
+                                            <strong>Cape Town</strong><br />
+                                            <span style={{ color: 'var(--mid-gray)' }}>Western Cape & surrounding areas</span>
+                                        </p>
+                                        <p>
+                                            <strong>Bloemfontein</strong><br />
+                                            <span style={{ color: 'var(--mid-gray)' }}>Free State & surrounding areas</span>
+                                        </p>
+                                    </div>
+
+                                    <div style={{ marginBottom: '40px' }}>
+                                        <h3 style={{ fontSize: '0.75em', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--mid-gray)', marginBottom: '15px' }}>Hours</h3>
+                                        <p>Monday - Friday: 8:00 AM - 5:00 PM</p>
+                                        <p style={{ color: 'var(--mid-gray)' }}>Emergency support available 24/7</p>
+                                    </div>
+
+                                    <div style={{ padding: '25px', background: 'var(--off-white)', marginTop: '30px' }}>
+                                        <p style={{ fontSize: '0.9em', marginBottom: '15px' }}>
+                                            <strong>Prefer to get a detailed quote?</strong>
+                                        </p>
+                                        <p style={{ fontSize: '0.85em', color: 'var(--mid-gray)', marginBottom: '15px' }}>
+                                            Use our quote form for a comprehensive assessment of your energy needs.
+                                        </p>
+                                        <a
+                                            className="cta-button"
+                                            onClick={() => navigateTo('quote')}
+                                            style={{ display: 'inline-block', padding: '12px 24px', fontSize: '0.85em' }}
+                                        >
+                                            Get a Quote
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </main>
             );
         }
 
