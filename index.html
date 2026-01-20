@@ -84,15 +84,20 @@
 
         .nav-links {
             display: flex;
-            gap: 50px;
+            gap: 40px;
             list-style: none;
+            align-items: center;
+        }
+
+        .nav-links li {
+            white-space: nowrap;
         }
 
         .nav-links a {
             text-decoration: none;
             color: var(--mid-gray);
-            font-size: 0.75em;
-            letter-spacing: 3px;
+            font-size: 0.7em;
+            letter-spacing: 2px;
             text-transform: uppercase;
             transition: color 0.3s;
             font-weight: 400;
@@ -104,12 +109,17 @@
             color: var(--black);
         }
 
-        .nav-phone a {
-            color: var(--black) !important;
-            font-weight: 500;
+        .nav-phone {
             border-left: 1px solid var(--lighter-gray);
             padding-left: 30px;
             margin-left: 10px;
+        }
+
+        .nav-phone a {
+            color: var(--black) !important;
+            font-weight: 500;
+            text-transform: none !important;
+            letter-spacing: 1px !important;
         }
 
         /* Mobile Menu */
