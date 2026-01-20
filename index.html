@@ -702,6 +702,255 @@
             font-weight: 300;
         }
 
+        /* Quote Form Styles */
+        .quote-form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px;
+            background: var(--white);
+            border: 1px solid var(--lighter-gray);
+        }
+
+        .quote-progress {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 40px;
+        }
+
+        .quote-progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--lighter-gray);
+            transition: all 0.3s;
+        }
+
+        .quote-progress-dot.active {
+            background: var(--black);
+            transform: scale(1.2);
+        }
+
+        .quote-progress-dot.completed {
+            background: var(--mid-gray);
+        }
+
+        .quote-step {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quote-step-title {
+            font-size: 0.7em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--mid-gray);
+            margin-bottom: 12px;
+        }
+
+        .quote-step-question {
+            font-size: 1.5em;
+            font-weight: 300;
+            color: var(--black);
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .quote-input {
+            width: 100%;
+            padding: 18px 20px;
+            font-size: 1.1em;
+            border: 1px solid var(--lighter-gray);
+            background: var(--white);
+            color: var(--black);
+            font-family: inherit;
+            transition: border-color 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .quote-input:focus {
+            outline: none;
+            border-color: var(--black);
+        }
+
+        .quote-input::placeholder {
+            color: var(--light-gray);
+        }
+
+        .quote-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .quote-radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .quote-radio-option {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            border: 1px solid var(--lighter-gray);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quote-radio-option:hover {
+            border-color: var(--mid-gray);
+        }
+
+        .quote-radio-option.selected {
+            border-color: var(--black);
+            background: var(--off-white);
+        }
+
+        .quote-radio-option input {
+            display: none;
+        }
+
+        .quote-radio-circle {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--light-gray);
+            border-radius: 50%;
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .quote-radio-option.selected .quote-radio-circle {
+            border-color: var(--black);
+        }
+
+        .quote-radio-option.selected .quote-radio-circle::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--black);
+            border-radius: 50%;
+        }
+
+        .quote-radio-label {
+            font-size: 0.95em;
+            color: var(--dark-gray);
+        }
+
+        .quote-buttons {
+            display: flex;
+            gap: 16px;
+            margin-top: 30px;
+        }
+
+        .quote-btn {
+            padding: 18px 40px;
+            font-size: 0.8em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border: 2px solid var(--black);
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .quote-btn-primary {
+            background: var(--black);
+            color: var(--white);
+            flex: 1;
+        }
+
+        .quote-btn-primary:hover {
+            background: var(--dark-gray);
+        }
+
+        .quote-btn-secondary {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        .quote-btn-secondary:hover {
+            background: var(--off-white);
+        }
+
+        .quote-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .quote-number-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .quote-number-item label {
+            display: block;
+            font-size: 0.8em;
+            letter-spacing: 1px;
+            color: var(--mid-gray);
+            margin-bottom: 8px;
+        }
+
+        .quote-summary {
+            background: var(--off-white);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .quote-summary h3 {
+            font-size: 0.8em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--mid-gray);
+            margin-bottom: 20px;
+        }
+
+        .quote-summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--lighter-gray);
+            font-size: 0.9em;
+        }
+
+        .quote-summary-label {
+            color: var(--mid-gray);
+        }
+
+        .quote-summary-value {
+            color: var(--black);
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .quote-form-container {
+                padding: 30px 20px;
+                margin: 0 20px;
+            }
+
+            .quote-number-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quote-buttons {
+                flex-direction: column;
+            }
+
+            .quote-btn {
+                width: 100%;
+            }
+        }
+
         /* Contact Section */
         .contact {
             background: var(--white);
@@ -878,6 +1127,7 @@
                     {currentPage === 'projects' && <ProjectsPage navigateTo={navigateTo} />}
                     {currentPage === 'example' && <ExampleAnalysisPage navigateTo={navigateTo} />}
                     {currentPage === 'calculator' && <CalculatorPage navigateTo={navigateTo} />}
+                    {currentPage === 'quote' && <QuotePage navigateTo={navigateTo} />}
                     <Footer />
                 </div>
             );
@@ -897,6 +1147,7 @@
                 { page: 'projects', label: 'What We Do' },
                 { page: 'example', label: 'Case Study' },
                 { page: 'calculator', label: 'Calculator' },
+                { page: 'quote', label: 'Get Quote' },
                 { page: 'home', label: 'Contact', isContact: true }
             ];
 
@@ -2672,6 +2923,486 @@
                         <div className="hero-buttons" style={{justifyContent: 'center', marginTop: '20px'}}>
                             <a className="cta-button primary" href="mailto:admin@solarstitch.co.za">Get a Free Energy Audit</a>
                             <a className="cta-button" href="mailto:admin@solarstitch.co.za">Talk to Our Team</a>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        /* ===== GET QUOTE PAGE ===== */
+        function QuotePage({ navigateTo }) {
+            const { useState } = React;
+            const [step, setStep] = useState(1);
+            const totalSteps = 10;
+
+            // Form data state
+            const [formData, setFormData] = useState({
+                address: '',
+                roofMaterial: '',
+                stories: '',
+                monthlySpend: '',
+                primaryGoal: '',
+                connectionType: '',
+                stoveType: '',
+                acUnits: '',
+                geysers: '',
+                pumps: '',
+                otherAppliances: '',
+                dbDistance: '',
+                budgetRange: '',
+                financing: '',
+                timeline: '',
+                additionalNotes: '',
+                name: '',
+                phone: '',
+                email: ''
+            });
+
+            const updateField = (field, value) => {
+                setFormData(prev => ({ ...prev, [field]: value }));
+            };
+
+            const nextStep = () => {
+                if (step < totalSteps) setStep(step + 1);
+            };
+
+            const prevStep = () => {
+                if (step > 1) setStep(step - 1);
+            };
+
+            const canProceed = () => {
+                switch(step) {
+                    case 1: return formData.address.length > 5;
+                    case 2: return formData.roofMaterial && formData.stories;
+                    case 3: return formData.monthlySpend && formData.primaryGoal;
+                    case 4: return formData.connectionType && formData.stoveType;
+                    case 5: return formData.dbDistance;
+                    case 6: return formData.budgetRange;
+                    case 7: return formData.financing;
+                    case 8: return formData.timeline;
+                    case 9: return true;
+                    case 10: return formData.name && formData.phone && formData.email;
+                    default: return true;
+                }
+            };
+
+            const generateEmailBody = () => {
+                const lines = [
+                    'SOLAR QUOTE REQUEST',
+                    '==================',
+                    '',
+                    'CONTACT DETAILS',
+                    `Name: ${formData.name}`,
+                    `Phone: ${formData.phone}`,
+                    `Email: ${formData.email}`,
+                    '',
+                    'PROPERTY DETAILS',
+                    `Address: ${formData.address}`,
+                    `Roof Material: ${formData.roofMaterial}`,
+                    `Stories: ${formData.stories}`,
+                    '',
+                    'ENERGY PROFILE',
+                    `Monthly Electricity Spend: R${formData.monthlySpend}`,
+                    `Primary Goal: ${formData.primaryGoal}`,
+                    `Connection Type: ${formData.connectionType}`,
+                    `Stove Type: ${formData.stoveType}`,
+                    `AC Units: ${formData.acUnits || '0'}`,
+                    `Geysers: ${formData.geysers || '0'}`,
+                    `Pumps: ${formData.pumps || '0'}`,
+                    `Other Appliances: ${formData.otherAppliances || 'None specified'}`,
+                    '',
+                    'INSTALLATION',
+                    `Distance from DB: ${formData.dbDistance}m`,
+                    '',
+                    'BUDGET & TIMELINE',
+                    `Budget Range: ${formData.budgetRange}`,
+                    `Financing Interest: ${formData.financing}`,
+                    `Timeline: ${formData.timeline}`,
+                    '',
+                    'ADDITIONAL NOTES',
+                    formData.additionalNotes || 'None',
+                    '',
+                    '==================',
+                    'Submitted via Solar Stitch Website'
+                ];
+                return encodeURIComponent(lines.join('\n'));
+            };
+
+            const submitForm = () => {
+                const subject = encodeURIComponent(`Solar Quote Request - ${formData.name}`);
+                const body = generateEmailBody();
+                window.location.href = `mailto:admin@solarstitch.co.za?subject=${subject}&body=${body}`;
+            };
+
+            const RadioGroup = ({ options, value, onChange, name }) => (
+                <div className="quote-radio-group">
+                    {options.map((option, i) => (
+                        <label
+                            key={i}
+                            className={`quote-radio-option ${value === option ? 'selected' : ''}`}
+                        >
+                            <input
+                                type="radio"
+                                name={name}
+                                value={option}
+                                checked={value === option}
+                                onChange={() => onChange(option)}
+                            />
+                            <span className="quote-radio-circle"></span>
+                            <span className="quote-radio-label">{option}</span>
+                        </label>
+                    ))}
+                </div>
+            );
+
+            const renderStep = () => {
+                switch(step) {
+                    case 1:
+                        return (
+                            <div className="quote-step" key={step}>
+                                <div className="quote-step-title">Step 1 of {totalSteps}</div>
+                                <div className="quote-step-question">What is your property address?</div>
+                                <input
+                                    type="text"
+                                    className="quote-input"
+                                    placeholder="Enter your full address"
+                                    value={formData.address}
+                                    onChange={(e) => updateField('address', e.target.value)}
+                                />
+                                <p style={{ fontSize: '0.85em', color: 'var(--mid-gray)' }}>
+                                    We currently service properties in South Africa
+                                </p>
+                            </div>
+                        );
+
+                    case 2:
+                        return (
+                            <div className="quote-step" key={step}>
+                                <div className="quote-step-title">Step 2 of {totalSteps}</div>
+                                <div className="quote-step-question">Tell us about your property</div>
+                                <p style={{ fontSize: '0.9em', color: 'var(--mid-gray)', marginBottom: '20px' }}>Roof Material</p>
+                                <RadioGroup
+                                    name="roofMaterial"
+                                    options={['Tiles', 'Corrugated Iron/Steel', 'Concrete', 'Thatch', 'Other']}
+                                    value={formData.roofMaterial}
+                                    onChange={(v) => updateField('roofMaterial', v)}
+                                />
+                                <p style={{ fontSize: '0.9em', color: 'var(--mid-gray)', marginBottom: '20px', marginTop: '30px' }}>Number of Stories</p>
+                                <RadioGroup
+                                    name="stories"
+                                    options={['Single Story', 'Double Story', 'Three+ Stories']}
+                                    value={formData.stories}
+                                    onChange={(v) => updateField('stories', v)}
+                                />
+                            </div>
+                        );
+
+                    case 3:
+                        return (
+                            <div className="quote-step" key={step}>
+                                <div className="quote-step-title">Step 3 of {totalSteps}</div>
+                                <div className="quote-step-question">What are your energy goals?</div>
+                                <p style={{ fontSize: '0.9em', color: 'var(--mid-gray)', marginBottom: '10px' }}>Monthly Electricity Spend (Rands)</p>
+                                <input
+                                    type="number"
+                                    className="quote-input"
+                                    placeholder="e.g. 2500"
+                                    value={formData.monthlySpend}
+                                    onChange={(e) => updateField('monthlySpend', e.target.value)}
+                                />
+                                <p style={{ fontSize: '0.9em', color: 'var(--mid-gray)', marginBottom: '20px', marginTop: '20px' }}>Primary Goal</p>
+                                <RadioGroup
+                                    name="primaryGoal"
+                                    options={[
+                                        'Reduce electricity costs',
+                                        'Backup power during load shedding',
+                                        'Energy independence',
+                                        'Environmental reasons',
+                                        'All of the above'
+                                    ]}
+                                    value={formData.primaryGoal}
+                                    onChange={(v) => updateField('primaryGoal', v)}
+                                />
+                            </div>
+                        );
+
+                    case 4:
+                        return (
+                            <div className="quote-step" key={step}>
+                                <div className="quote-step-title">Step 4 of {totalSteps}</div>
+                                <div className="quote-step-question">Technical specifications</div>
+                                <p style={{ fontSize: '0.9em', color: 'var(--mid-gray)', marginBottom: '20px' }}>Electrical Connection Type</p>
+                                <RadioGroup
+                                    name="connectionType"
+                                    options={['Single Phase', 'Three Phase', 'Not Sure']}
+                                    value={formData.connectionType}
+                                    onChange={(v) => updateField('connectionType', v)}
+                                />
+                                <p style={{ fontSize: '0.9em', color: 'var(--mid-gray)', marginBottom: '20px', marginTop: '30px' }}>Stove Type</p>
+                                <RadioGroup
+                                    name="stoveType"
+                                    options={['Electric', 'Gas', 'Both']}
+                                    value={formData.stoveType}
+                                    onChange={(v) => updateField('stoveType', v)}
+                                />
+                                <div className="quote-number-grid" style={{ marginTop: '30px' }}>
+                                    <div className="quote-number-item">
+                                        <label>Air Conditioning Units</label>
+                                        <input
+                                            type="number"
+                                            className="quote-input"
+                                            placeholder="0"
+                                            value={formData.acUnits}
+                                            onChange={(e) => updateField('acUnits', e.target.value)}
+                                            min="0"
+                                        />
+                                    </div>
+                                    <div className="quote-number-item">
+                                        <label>Geysers</label>
+                                        <input
+                                            type="number"
+                                            className="quote-input"
+                                            placeholder="0"
+                                            value={formData.geysers}
+                                            onChange={(e) => updateField('geysers', e.target.value)}
+                                            min="0"
+                                        />
+                                    </div>
+                                    <div className="quote-number-item">
+                                        <label>Pool/Borehole Pumps</label>
+                                        <input
+                                            type="number"
+                                            className="quote-input"
+                                            placeholder="0"
+                                            value={formData.pumps}
+                                            onChange={(e) => updateField('pumps', e.target.value)}
+                                            min="0"
+                                        />
+                                    </div>
+                                </div>
+                                <p style={{ fontSize: '0.9em', color: 'var(--mid-gray)', marginBottom: '10px' }}>Other Major Appliances (optional)</p>
+                                <textarea
+                                    className="quote-input quote-textarea"
+                                    placeholder="e.g. Electric vehicle charger, underfloor heating, cold room..."
+                                    value={formData.otherAppliances}
+                                    onChange={(e) => updateField('otherAppliances', e.target.value)}
+                                />
+                            </div>
+                        );
+
+                    case 5:
+                        return (
+                            <div className="quote-step" key={step}>
+                                <div className="quote-step-title">Step 5 of {totalSteps}</div>
+                                <div className="quote-step-question">Installation distance</div>
+                                <p style={{ fontSize: '0.9em', color: 'var(--mid-gray)', marginBottom: '10px' }}>
+                                    Approximate distance from your main DB (distribution board) to the installation area in meters
+                                </p>
+                                <input
+                                    type="number"
+                                    className="quote-input"
+                                    placeholder="e.g. 15"
+                                    value={formData.dbDistance}
+                                    onChange={(e) => updateField('dbDistance', e.target.value)}
+                                    min="0"
+                                />
+                                <p style={{ fontSize: '0.85em', color: 'var(--light-gray)', marginTop: '10px' }}>
+                                    Not sure? Estimate or leave as 0 — we'll measure during site visit
+                                </p>
+                            </div>
+                        );
+
+                    case 6:
+                        return (
+                            <div className="quote-step" key={step}>
+                                <div className="quote-step-title">Step 6 of {totalSteps}</div>
+                                <div className="quote-step-question">What is your budget range?</div>
+                                <RadioGroup
+                                    name="budgetRange"
+                                    options={[
+                                        'Under R80,000',
+                                        'R80,000 - R120,000',
+                                        'R120,000 - R150,000',
+                                        'R150,000 - R180,000',
+                                        'R180,000+',
+                                        'Not sure / Flexible'
+                                    ]}
+                                    value={formData.budgetRange}
+                                    onChange={(v) => updateField('budgetRange', v)}
+                                />
+                            </div>
+                        );
+
+                    case 7:
+                        return (
+                            <div className="quote-step" key={step}>
+                                <div className="quote-step-title">Step 7 of {totalSteps}</div>
+                                <div className="quote-step-question">Are you interested in financing options?</div>
+                                <p style={{ fontSize: '0.9em', color: 'var(--mid-gray)', marginBottom: '20px' }}>
+                                    We can help arrange financing through various providers
+                                </p>
+                                <RadioGroup
+                                    name="financing"
+                                    options={[
+                                        'Yes, I\'d like to explore financing',
+                                        'No, I prefer to pay cash',
+                                        'Tell me more about the options'
+                                    ]}
+                                    value={formData.financing}
+                                    onChange={(v) => updateField('financing', v)}
+                                />
+                            </div>
+                        );
+
+                    case 8:
+                        return (
+                            <div className="quote-step" key={step}>
+                                <div className="quote-step-title">Step 8 of {totalSteps}</div>
+                                <div className="quote-step-question">When are you looking to install?</div>
+                                <RadioGroup
+                                    name="timeline"
+                                    options={[
+                                        'As soon as possible',
+                                        'Within 1-3 months',
+                                        'Within 3-6 months',
+                                        'Just researching for now'
+                                    ]}
+                                    value={formData.timeline}
+                                    onChange={(v) => updateField('timeline', v)}
+                                />
+                            </div>
+                        );
+
+                    case 9:
+                        return (
+                            <div className="quote-step" key={step}>
+                                <div className="quote-step-title">Step 9 of {totalSteps}</div>
+                                <div className="quote-step-question">Any additional requirements?</div>
+                                <p style={{ fontSize: '0.9em', color: 'var(--mid-gray)', marginBottom: '20px' }}>
+                                    Tell us anything else that might help us prepare your quote
+                                </p>
+                                <textarea
+                                    className="quote-input quote-textarea"
+                                    placeholder="e.g. Specific brand preferences, existing solar equipment, shading concerns, HOA restrictions..."
+                                    value={formData.additionalNotes}
+                                    onChange={(e) => updateField('additionalNotes', e.target.value)}
+                                    style={{ minHeight: '150px' }}
+                                />
+                            </div>
+                        );
+
+                    case 10:
+                        return (
+                            <div className="quote-step" key={step}>
+                                <div className="quote-step-title">Step 10 of {totalSteps}</div>
+                                <div className="quote-step-question">Your contact details</div>
+                                <input
+                                    type="text"
+                                    className="quote-input"
+                                    placeholder="Full Name *"
+                                    value={formData.name}
+                                    onChange={(e) => updateField('name', e.target.value)}
+                                />
+                                <input
+                                    type="tel"
+                                    className="quote-input"
+                                    placeholder="Phone Number *"
+                                    value={formData.phone}
+                                    onChange={(e) => updateField('phone', e.target.value)}
+                                />
+                                <input
+                                    type="email"
+                                    className="quote-input"
+                                    placeholder="Email Address *"
+                                    value={formData.email}
+                                    onChange={(e) => updateField('email', e.target.value)}
+                                />
+
+                                <div className="quote-summary">
+                                    <h3>Summary</h3>
+                                    {[
+                                        { label: 'Address', value: formData.address },
+                                        { label: 'Roof', value: `${formData.roofMaterial}, ${formData.stories}` },
+                                        { label: 'Monthly Spend', value: `R${formData.monthlySpend}` },
+                                        { label: 'Goal', value: formData.primaryGoal },
+                                        { label: 'Budget', value: formData.budgetRange },
+                                        { label: 'Timeline', value: formData.timeline },
+                                    ].map((item, i) => (
+                                        <div key={i} className="quote-summary-item">
+                                            <span className="quote-summary-label">{item.label}</span>
+                                            <span className="quote-summary-value">{item.value || '—'}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <p style={{ fontSize: '0.85em', color: 'var(--mid-gray)', textAlign: 'center' }}>
+                                    Clicking submit will open your email client with your quote request
+                                </p>
+                            </div>
+                        );
+
+                    default:
+                        return null;
+                }
+            };
+
+            return (
+                <div>
+                    <div className="page-header">
+                        <h1 className="section-title">GET A QUOTE</h1>
+                        <p className="section-subtitle">
+                            Answer a few questions and we'll prepare a customized solar recommendation
+                        </p>
+                    </div>
+
+                    <section style={{ padding: '60px 20px', backgroundColor: 'var(--off-white)', minHeight: '70vh' }}>
+                        <div className="quote-form-container">
+                            {/* Progress Dots */}
+                            <div className="quote-progress">
+                                {Array.from({ length: totalSteps }, (_, i) => (
+                                    <div
+                                        key={i}
+                                        className={`quote-progress-dot ${i + 1 === step ? 'active' : ''} ${i + 1 < step ? 'completed' : ''}`}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Current Step */}
+                            {renderStep()}
+
+                            {/* Navigation Buttons */}
+                            <div className="quote-buttons">
+                                {step > 1 && (
+                                    <button className="quote-btn quote-btn-secondary" onClick={prevStep}>
+                                        Back
+                                    </button>
+                                )}
+                                {step < totalSteps ? (
+                                    <button
+                                        className="quote-btn quote-btn-primary"
+                                        onClick={nextStep}
+                                        disabled={!canProceed()}
+                                    >
+                                        Continue
+                                    </button>
+                                ) : (
+                                    <button
+                                        className="quote-btn quote-btn-primary"
+                                        onClick={submitForm}
+                                        disabled={!canProceed()}
+                                    >
+                                        Submit Request
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </section>
+
+                    <div className="cta-banner" style={{ background: 'var(--white)' }}>
+                        <p>Prefer to talk directly? Call or email us anytime.</p>
+                        <div className="hero-buttons" style={{ justifyContent: 'center', marginTop: '20px' }}>
+                            <a className="cta-button" href="tel:+27123456789">Call Us</a>
+                            <a className="cta-button" href="mailto:admin@solarstitch.co.za">Email Us</a>
                         </div>
                     </div>
                 </div>
